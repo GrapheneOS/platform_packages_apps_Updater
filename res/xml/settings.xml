@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="@string/settings_title"
+        xmlns:settings="http://schemas.android.com/apk/res/com.android.settings">
+
+    <ListPreference android:key="channel"
+            android:title="@string/channel_title"
+            android:summary="%s"
+            android:entries="@array/channel_entries"
+            android:entryValues="@array/channel_values"
+            android:defaultValue="stable" />
+
+    <ListPreference android:key="network_type"
+            android:persistent="false"
+            android:title="@string/network_type_title"
+            android:summary="%s"
+            android:entries="@array/network_type_entries"
+            android:entryValues="@array/network_type_values"
+            android:defaultValue="1" />
+
+    <SwitchPreference android:key="battery_not_low"
+            android:title="@string/battery_not_low_title"
+            android:summary="@string/battery_not_low_summary" />
+
+    <SwitchPreference android:key="idle_reboot"
+            android:title="@string/idle_reboot_title"
+            android:summary="@string/idle_reboot_summary" />
+
+</PreferenceScreen>
