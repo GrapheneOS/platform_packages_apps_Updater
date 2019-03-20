@@ -3,6 +3,8 @@ package app.seamlessupdate.client;
 import static android.os.Build.DEVICE;
 import static android.os.Build.FINGERPRINT;
 import static android.os.Build.VERSION.INCREMENTAL;
+import static android.os.UpdateEngine.UpdateStatusConstants.DOWNLOADING;
+import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -41,11 +43,6 @@ import java.util.zip.ZipFile;
 
 public class Service extends IntentService {
     private static final String TAG = "Service";
-    private static final int NOTIFICATION_ID = 1;
-    private static final String NOTIFICATION_CHANNEL_ID_OLD = "updates";
-    private static final String NOTIFICATION_CHANNEL_ID = "updates2";
-    private static final int PENDING_REBOOT_ID = 1;
-    private static final int PENDING_SETTINGS_ID = 2;
     private static final int CONNECT_TIMEOUT = 60000;
     private static final int READ_TIMEOUT = 60000;
     private static final File CARE_MAP_PATH = new File("/data/ota_package/care_map.txt");
@@ -54,6 +51,7 @@ public class Service extends IntentService {
     private static final String PREFERENCE_DOWNLOAD_FILE = "download_file";
     private static final int HTTP_RANGE_NOT_SATISFIABLE = 416;
 
+    private NotificationHandler notificationHandler;
     private boolean mUpdating = false;
 
     public Service() {
@@ -62,6 +60,12 @@ public class Service extends IntentService {
 
     static boolean isAbUpdate() {
         return SystemProperties.getBoolean("ro.build.ab_update", false);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        notificationHandler = new NotificationHandler(this);
     }
 
     private URLConnection fetchData(final String path) throws IOException {
@@ -79,10 +83,16 @@ public class Service extends IntentService {
             @Override
             public void onStatusUpdate(int status, float percent) {
                 Log.d(TAG, "onStatusUpdate: " + status + ", " + percent * 100 + "%");
+                if (status == DOWNLOADING) {
+                    notificationHandler.showInstallNotification(Math.round(percent * 100), 200);
+                } else if (status == FINALIZING) {
+                    notificationHandler.showInstallNotification(Math.round(percent * 100) + 100, 200);
+                }
             }
 
             @Override
             public void onPayloadApplicationComplete(int errorCode) {
+                notificationHandler.cancelInstallNotification();
                 if (errorCode == ErrorCodeConstants.SUCCESS) {
                     Log.d(TAG, "onPayloadApplicationComplete success");
                     annoyUser();
@@ -212,28 +222,7 @@ public class Service extends IntentService {
         if (preferences.getBoolean(Settings.KEY_IDLE_REBOOT, false)) {
             IdleReboot.schedule(this);
         }
-
-        final String title = getString(isAbUpdate() ? R.string.notification_title : R.string.notification_title_legacy);
-        final String text = getString(isAbUpdate() ? R.string.notification_text : R.string.notification_text_legacy);
-        final String rebootText = getString(isAbUpdate() ? R.string.notification_reboot_action : R.string.notification_reboot_action_legacy);
-
-        final PendingIntent reboot = PendingIntent.getBroadcast(this, PENDING_REBOOT_ID, new Intent(this, RebootReceiver.class), 0);
-        final PendingIntent settings = PendingIntent.getActivity(this, PENDING_SETTINGS_ID, new Intent(this, Settings.class), 0);
-        final NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-            getString(R.string.notification_channel), NotificationManager.IMPORTANCE_HIGH);
-        channel.enableLights(true);
-        channel.enableVibration(true);
-        notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID_OLD);
-        notificationManager.createNotificationChannel(channel);
-        notificationManager.notify(NOTIFICATION_ID, new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .addAction(R.drawable.ic_restart, rebootText, reboot)
-            .setContentIntent(settings)
-            .setContentTitle(title)
-            .setContentText(text)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_system_update_white_24dp)
-            .build());
+        notificationHandler.showRebootNotification();
     }
 
     @Override
@@ -276,6 +265,7 @@ public class Service extends IntentService {
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded = UPDATE_PATH.length();
+            int contentLength;
 
             final String incrementalUpdate = DEVICE + "-incremental-" + INCREMENTAL + "-" + targetIncremental + ".zip";
             final String fullUpdate = DEVICE + "-ota_update-" + targetIncremental + ".zip";
@@ -289,20 +279,27 @@ public class Service extends IntentService {
                     onDownloadFinished(targetBuildDate, channel);
                     return;
                 }
+                contentLength = connection.getContentLength() + (int) downloaded;
                 input = connection.getInputStream();
             } else {
                 try {
                     Log.d(TAG, "fetch incremental " + incrementalUpdate);
                     downloadFile = incrementalUpdate;
-                    input = fetchData(downloadFile).getInputStream();
+                    final URLConnection connection = fetchData(downloadFile);
+                    contentLength = connection.getContentLength();
+                    input = connection.getInputStream();
                 } catch (IOException e) {
                     Log.d(TAG, "incremental not found, fetch full update " + fullUpdate);
                     downloadFile = fullUpdate;
-                    input = fetchData(downloadFile).getInputStream();
+                    final URLConnection connection = fetchData(downloadFile);
+                    contentLength = connection.getContentLength();
+                    input = connection.getInputStream();
                 }
                 downloaded = 0;
                 Files.deleteIfExists(UPDATE_PATH.toPath());
             }
+
+            notificationHandler.showDownloadNotification((int) downloaded, contentLength);
 
             final OutputStream output = new FileOutputStream(UPDATE_PATH, downloaded != 0);
             preferences.edit().putString(PREFERENCE_DOWNLOAD_FILE, downloadFile).commit();
@@ -315,7 +312,8 @@ public class Service extends IntentService {
                 downloaded += bytesRead;
                 final long now = System.nanoTime();
                 if (now - last > 1000 * 1000 * 1000) {
-                    Log.d(TAG, "downloaded " + downloaded + " bytes");
+                    Log.d(TAG, "downloaded " + downloaded + " from " + contentLength + " bytes");
+                    notificationHandler.showDownloadNotification((int) downloaded, contentLength);
                     last = now;
                 }
             }
@@ -323,6 +321,7 @@ public class Service extends IntentService {
             input.close();
 
             Log.d(TAG, "download completed");
+            notificationHandler.cancelDownloadNotification();
             onDownloadFinished(targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
@@ -331,6 +330,8 @@ public class Service extends IntentService {
         } finally {
             Log.d(TAG, "release wake locks");
             wakeLock.release();
+            notificationHandler.cancelDownloadNotification();
+            notificationHandler.cancelInstallNotification();
             TriggerUpdateReceiver.completeWakefulIntent(intent);
         }
     }
