@@ -7,11 +7,6 @@ import static android.os.UpdateEngine.UpdateStatusConstants.DOWNLOADING;
 import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -22,7 +17,6 @@ import android.os.SystemProperties;
 import android.os.UpdateEngine;
 import android.os.UpdateEngine.ErrorCodeConstants;
 import android.os.UpdateEngineCallback;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -47,7 +41,6 @@ public class Service extends IntentService {
     private static final int READ_TIMEOUT = 60000;
     private static final File CARE_MAP_PATH = new File("/data/ota_package/care_map.txt");
     static final File UPDATE_PATH = new File("/data/ota_package/update.zip");
-    private static final String PREFERENCE_CHANNEL = "channel";
     private static final String PREFERENCE_DOWNLOAD_FILE = "download_file";
     private static final int HTTP_RANGE_NOT_SATISFIABLE = 416;
 
@@ -219,7 +212,7 @@ public class Service extends IntentService {
         PeriodicJob.cancel(this);
         final SharedPreferences preferences = Settings.getPreferences(this);
         preferences.edit().putBoolean(Settings.KEY_WAITING_FOR_REBOOT, true).apply();
-        if (preferences.getBoolean(Settings.KEY_IDLE_REBOOT, false)) {
+        if (Settings.getIdleReboot(this)) {
             IdleReboot.schedule(this);
         }
         notificationHandler.showRebootNotification();
@@ -245,8 +238,7 @@ public class Service extends IntentService {
             }
             mUpdating = true;
 
-            final String channel = SystemProperties.get("sys.update.channel",
-                preferences.getString(PREFERENCE_CHANNEL, "stable"));
+            final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(this));
 
             Log.d(TAG, "fetching metadata for " + DEVICE + "-" + channel);
             InputStream input = fetchData(DEVICE + "-" + channel).getInputStream();
