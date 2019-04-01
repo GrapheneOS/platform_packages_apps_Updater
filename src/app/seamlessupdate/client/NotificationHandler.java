@@ -15,7 +15,6 @@ public class NotificationHandler {
     private static final int NOTIFICATION_ID_DOWNLOAD = 1;
     private static final int NOTIFICATION_ID_INSTALL = 2;
     private static final int NOTIFICATION_ID_REBOOT = 3;
-    private static final String NOTIFICATION_CHANNEL_ID_OLD = "updates";
     private static final String NOTIFICATION_CHANNEL_ID = "updates2";
     private static final String NOTIFICATION_CHANNEL_ID_PROGRESS = "progress";
     private static final int PENDING_REBOOT_ID = 1;
@@ -56,7 +55,6 @@ public class NotificationHandler {
                 context.getString(R.string.notification_channel), NotificationManager.IMPORTANCE_HIGH);
         channel.enableLights(true);
         channel.enableVibration(true);
-        notificationManager.deleteNotificationChannel(NOTIFICATION_CHANNEL_ID_OLD);
         notificationManager.createNotificationChannel(channel);
         notificationManager.notify(NOTIFICATION_ID_REBOOT, new Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .addAction(R.drawable.ic_restart, rebootText, reboot)
