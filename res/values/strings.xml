@@ -25,4 +25,7 @@
     <string name="idle_reboot_summary">Automatically reboot once the device is idle after successfully installing an update</string>
     <string name="check_for_updates_title">Check for updates</string>
     <string name="check_for_updates_summary">Tap to check for updates as soon as possible</string>
+    <string name="changelog_title">Changelog</string>
+    <string name="changelog_summary">Tap to view changelog</string>
+    <string name="changelog_unavailable">Changelog unavailable</string>
 </resources>

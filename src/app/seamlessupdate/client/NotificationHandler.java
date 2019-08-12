@@ -4,8 +4,13 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
+
+import java.io.File;
 
 import static android.app.NotificationManager.IMPORTANCE_LOW;
 import static app.seamlessupdate.client.Service.isAbUpdate;
@@ -19,6 +24,7 @@ public class NotificationHandler {
     private static final String NOTIFICATION_CHANNEL_ID_PROGRESS = "progress";
     private static final int PENDING_REBOOT_ID = 1;
     private static final int PENDING_SETTINGS_ID = 2;
+    private static final int PENDING_CHANGELOG_ID = 3;
 
     private final Context context;
     private final NotificationManager notificationManager;
@@ -32,7 +38,7 @@ public class NotificationHandler {
     void showDownloadNotification(int progress, int max) {
         String title = context.getString(R.string.notification_download_title);
         Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
-                .setContentIntent(getPendingSettingsIntent())
+                .setContentIntent(getPendingChangelogIntent())
                 .setContentTitle(title)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp);
@@ -58,7 +64,7 @@ public class NotificationHandler {
         notificationManager.createNotificationChannel(channel);
         notificationManager.notify(NOTIFICATION_ID_REBOOT, new Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .addAction(R.drawable.ic_restart, rebootText, reboot)
-                .setContentIntent(getPendingSettingsIntent())
+                .setContentIntent(getPendingChangelogIntent())
                 .setContentTitle(title)
                 .setContentText(text)
                 .setOngoing(true)
@@ -69,7 +75,7 @@ public class NotificationHandler {
     void showInstallNotification(int progress, int max) {
         String title = context.getString(R.string.notification_install_title);
         Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
-                .setContentIntent(getPendingSettingsIntent())
+                .setContentIntent(getPendingChangelogIntent())
                 .setContentTitle(title)
                 .setOngoing(true)
                 .setProgress(max, progress, false)
@@ -87,8 +93,13 @@ public class NotificationHandler {
         notificationManager.createNotificationChannel(channel);
     }
 
-    private PendingIntent getPendingSettingsIntent() {
-        return PendingIntent.getActivity(context, PENDING_SETTINGS_ID, new Intent(context, Settings.class), 0);
+    private PendingIntent getPendingChangelogIntent() {
+        Intent intent = Settings.getChangelogIntent(context, "current.html");
+        if (intent != null) {
+            return PendingIntent.getActivity(context, PENDING_CHANGELOG_ID, intent, 0);
+        } else {
+            return null;
+        }
     }
 
 }

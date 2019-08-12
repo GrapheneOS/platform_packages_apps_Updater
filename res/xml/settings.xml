@@ -8,6 +8,10 @@
             android:title="@string/check_for_updates_title"
             android:summary="@string/check_for_updates_summary" />
 
+    <Preference android:key="changelog"
+            android:title="@string/changelog_title"
+            android:summary="@string/changelog_summary" />
+
     <ListPreference android:key="channel"
             android:title="@string/channel_title"
             android:summary="%s"

@@ -1,6 +1,8 @@
 package app.seamlessupdate.client;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -8,6 +10,10 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
+
+import java.io.File;
 
 public class Settings extends PreferenceActivity {
     private static final String KEY_CHANNEL = "channel";
@@ -15,6 +21,7 @@ public class Settings extends PreferenceActivity {
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
     private static final String KEY_CHECK_FOR_UDPATES = "check_for_updates";
+    private static final String KEY_CHANGELOG = "changelog";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
 
     static SharedPreferences getPreferences(final Context context) {
@@ -56,6 +63,17 @@ public class Settings extends PreferenceActivity {
         checkForUpdates.setOnPreferenceClickListener((final Preference preference) -> {
             if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
                 PeriodicJob.schedule(this, true);
+            }
+            return true;
+        });
+
+        final Preference changelog = findPreference(KEY_CHANGELOG);
+        changelog.setOnPreferenceClickListener((final Preference preference) -> {
+            Intent intent = getChangelogIntent(this, "current.html");
+            if (intent != null) {
+                startActivity(intent);
+            } else {
+                changelog.setSummary(getString(R.string.changelog_unavailable));
             }
             return true;
         });
@@ -103,5 +121,29 @@ public class Settings extends PreferenceActivity {
         super.onResume();
         final ListPreference networkType = (ListPreference) findPreference(KEY_NETWORK_TYPE);
         networkType.setValue(Integer.toString(getNetworkType(this)));
+        final Preference changelog = findPreference(KEY_CHANGELOG);
+        changelog.setSummary(getString(R.string.changelog_summary));
+    }
+
+    static Intent getChangelogIntent(Context context, String filename) {
+        // From com.android.settings.SettingsLicenseActivity.showHtmlFromUri()
+        // Kick off external viewer due to WebView security restrictions; we
+        // carefully point it at HTMLViewer, since it offers to decompress
+        // before viewing.
+        final File changelogPath = new File(context.getCacheDir(), "changelog");
+        final File changelogFile = new File(changelogPath, filename);
+        if (!changelogFile.exists()) {
+            return null;
+        }
+        final Uri uri = FileProvider.getUriForFile(context, "app.seamlessupdate.client.fileprovider", changelogFile);
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "text/html");
+        intent.putExtra(Intent.EXTRA_TITLE, context.getString(R.string.changelog_title));
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setPackage("com.android.htmlviewer");
+        return intent;
     }
 }

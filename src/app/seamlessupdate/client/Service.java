@@ -7,6 +7,7 @@ import static android.os.UpdateEngine.UpdateStatusConstants.DOWNLOADING;
 import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -255,6 +256,8 @@ public class Service extends IntentService {
                 return;
             }
 
+            downloadChangelog(this, channel);
+
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded = UPDATE_PATH.length();
             int contentLength;
@@ -325,6 +328,27 @@ public class Service extends IntentService {
             notificationHandler.cancelDownloadNotification();
             notificationHandler.cancelInstallNotification();
             TriggerUpdateReceiver.completeWakefulIntent(intent);
+        }
+    }
+
+    private void downloadChangelog(Context context, String channel) {
+        Log.d(TAG, "fetching changelog for " + DEVICE + "-" + channel);
+        final String changelogName = DEVICE + "-" + channel + "-changelog.html";
+        try {
+            final File changelogPath = new File(context.getCacheDir(), "changelog");
+            final File changelogFile = new File(changelogPath, "current.html");
+            changelogPath.mkdirs();
+            InputStream input = fetchData(changelogName).getInputStream();
+            final OutputStream output = new FileOutputStream(changelogFile);
+            int bytesRead;
+            final byte[] buffer = new byte[8192];
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+            output.close();
+            input.close();
+        } catch (IOException e) {
+            Log.d(TAG, "failed to fetch changelog");
         }
     }
 }
