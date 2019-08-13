@@ -23,4 +23,6 @@
     <string name="battery_not_low_summary">Only download / install updates when the battery is above the warning level</string>
     <string name="idle_reboot_title">Automatic reboot</string>
     <string name="idle_reboot_summary">Automatically reboot once the device is idle after successfully installing an update</string>
+    <string name="check_for_updates_title">Updates</string>
+    <string name="check_for_updates_summary">Tap to check for updates</string>
 </resources>

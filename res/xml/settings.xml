@@ -4,6 +4,10 @@
         android:title="@string/settings_title"
         xmlns:settings="http://schemas.android.com/apk/res/com.android.settings">
 
+    <Preference android:key="check_for_updates"
+            android:title="@string/check_for_updates_title"
+            android:summary="@string/check_for_updates_summary" />
+
     <ListPreference android:key="channel"
             android:title="@string/channel_title"
             android:summary="%s"
