@@ -16,12 +16,12 @@ public class PeriodicJob extends JobService {
     private static final long INTERVAL_MILLIS = 4 * 60 * 60 * 1000;
     private static final long MIN_LATENCY_MILLIS = 4 * 60 * 1000;
 
-    static void schedule(final Context context) {
+    static void schedule(final Context context, final boolean force) {
         final int networkType = Settings.getNetworkType(context);
         final boolean batteryNotLow = Settings.getBatteryNotLow(context);
         final JobScheduler scheduler = context.getSystemService(JobScheduler.class);
         final JobInfo jobInfo = scheduler.getPendingJob(JOB_ID_PERIODIC);
-        if (jobInfo != null &&
+        if (!force && jobInfo != null &&
                 jobInfo.getNetworkType() == networkType &&
                 jobInfo.isRequireBatteryNotLow() == batteryNotLow &&
                 jobInfo.isPersisted() &&
@@ -39,6 +39,10 @@ public class PeriodicJob extends JobService {
         if (result == JobScheduler.RESULT_FAILURE) {
             Log.d(TAG, "Periodic job schedule failed");
         }
+    }
+
+    static void schedule(final Context context) {
+        schedule(context, false);
     }
 
     static void scheduleRetry(final Context context) {

@@ -14,6 +14,7 @@ public class Settings extends PreferenceActivity {
     private static final String KEY_NETWORK_TYPE = "network_type";
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
+    private static final String KEY_CHECK_FOR_UDPATES = "check_for_updates";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
 
     static SharedPreferences getPreferences(final Context context) {
@@ -50,6 +51,14 @@ public class Settings extends PreferenceActivity {
         getPreferenceManager().setStorageDeviceProtected();
         PreferenceManager.setDefaultValues(createDeviceProtectedStorageContext(), R.xml.settings, false);
         addPreferencesFromResource(R.xml.settings);
+
+        final Preference checkForUpdates = findPreference(KEY_CHECK_FOR_UDPATES);
+        checkForUpdates.setOnPreferenceClickListener((final Preference preference) -> {
+            if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
+                PeriodicJob.schedule(this, true);
+            }
+            return true;
+        });
 
         final Preference networkType = findPreference(KEY_NETWORK_TYPE);
         networkType.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
