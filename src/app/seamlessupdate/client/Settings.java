@@ -60,6 +60,15 @@ public class Settings extends PreferenceActivity {
             return true;
         });
 
+        final Preference channel = findPreference(KEY_CHANNEL);
+        channel.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
+            getPreferences(this).edit().putString(KEY_CHANNEL,(String) newValue).apply();
+            if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
+                PeriodicJob.schedule(this);
+            }
+            return true;
+        });
+
         final Preference networkType = findPreference(KEY_NETWORK_TYPE);
         networkType.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
             final int value = Integer.parseInt((String) newValue);
