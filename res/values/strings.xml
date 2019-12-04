@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Seamless Update Client</string>
+    <string name="app_name">RattlesnakeOS Updater</string>
     <string name="notification_channel">Reboot Prompt</string>
     <string name="notification_channel_progress">Update Progress</string>
     <string name="notification_download_title">Downloading system update</string>
