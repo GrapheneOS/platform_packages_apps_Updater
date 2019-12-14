@@ -11,6 +11,8 @@
     <string name="notification_text_legacy">Please install the latest OS release.</string>
     <string name="notification_reboot_action">Reboot</string>
     <string name="notification_reboot_action_legacy">Reboot and install</string>
+    <string name="notification_updater_contact_fail_title">Update Stale Warning</string>
+    <string name="notification_updater_contact_fail_text">Seamless updater could not reach update server for more than one day. Please check logs.</string>
     <string name="settings_title">System update settings</string>
     <string name="channel_title">Release channel</string>
     <string name="channel_stable">Stable</string>

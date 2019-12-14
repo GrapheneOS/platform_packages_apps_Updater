@@ -15,8 +15,10 @@ public class NotificationHandler {
     private static final int NOTIFICATION_ID_DOWNLOAD = 1;
     private static final int NOTIFICATION_ID_INSTALL = 2;
     private static final int NOTIFICATION_ID_REBOOT = 3;
+    private static final int NOTIFICATION_ID_UPDATE_FAIL = 4;
     private static final String NOTIFICATION_CHANNEL_ID = "updates2";
     private static final String NOTIFICATION_CHANNEL_ID_PROGRESS = "progress";
+    private static final String NOTIFICATION_CHANNEL_ID_UPDATE_FAIL = "update_warning";
     private static final int PENDING_REBOOT_ID = 1;
     private static final int PENDING_SETTINGS_ID = 2;
 
@@ -39,6 +41,17 @@ public class NotificationHandler {
         if (max <= 0) builder.setProgress(0, 0, true);
         else builder.setProgress(max, progress, false);
         notificationManager.notify(NOTIFICATION_ID_DOWNLOAD, builder.build());
+    }
+
+    void warnStaleOSVersionNotification() {
+        String title = context.getString(R.string.notification_updater_contact_fail_title);
+        String subtext = context.getString(R.string.notification_updater_contact_fail_text);
+        Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_UPDATE_FAIL)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(title)
+                .setSubText(subtext)
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp);
+        notificationManager.notify(NOTIFICATION_ID_UPDATE_FAIL, builder.build());
     }
 
     void cancelDownloadNotification() {

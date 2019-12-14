@@ -9,6 +9,7 @@ import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -34,6 +35,7 @@ import java.security.GeneralSecurityException;
 import java.util.concurrent.CountDownLatch;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.Date;
 
 public class Service extends IntentService {
     private static final String TAG = "Service";
@@ -43,6 +45,10 @@ public class Service extends IntentService {
     static final File UPDATE_PATH = new File("/data/ota_package/update.zip");
     private static final String PREFERENCE_DOWNLOAD_FILE = "download_file";
     private static final int HTTP_RANGE_NOT_SATISFIABLE = 416;
+    private static final long ONEDAY = 86400000L;
+
+    private static final String UPDATER_MAP = "updater_map";
+    private static final String LAST_UPDATE_CHECK_TIME_KEY = "last_update_check_time";
 
     private NotificationHandler notificationHandler;
     private boolean mUpdating = false;
@@ -218,12 +224,25 @@ public class Service extends IntentService {
         notificationHandler.showRebootNotification();
     }
 
+    private void setLastUpdateCheckTime() {
+        final SharedPreferences preferences = getPreferences(UPDATER_MAP, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(LAST_UPDATE_CHECK_TIME_KEY, System.currentTimeMillis);
+        editor.apply();
+    }
+
+    private long getLastUpdateCheckTime() {
+        final SharedPreferences preferences = getPreferences(UPDATER_MAP, MODE_PRIVATE);
+        return preferences.getLong(LAST_UPDATE_CHECK_TIME_KEY, Long.MAX_VALUE);
+    }
+
     @Override
     protected void onHandleIntent(final Intent intent) {
         Log.d(TAG, "onHandleIntent");
 
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+
         try {
             wakeLock.acquire();
 
@@ -231,7 +250,7 @@ public class Service extends IntentService {
                 Log.d(TAG, "updating already, returning early");
                 return;
             }
-            final SharedPreferences preferences = Settings.getPreferences(this);
+            final SharedPreferences preferences = getPreferences(R.string, MODE_PRIVATE)
             if (preferences.getBoolean(Settings.KEY_WAITING_FOR_REBOOT, false)) {
                 Log.d(TAG, "updated already, waiting for reboot");
                 return;
@@ -249,6 +268,7 @@ public class Service extends IntentService {
             final String targetIncremental = metadata[0];
             final long targetBuildDate = Long.parseLong(metadata[1]);
             final long sourceBuildDate = SystemProperties.getLong("ro.build.date.utc", 0);
+            setLastUpdateCheckTime();
             if (targetBuildDate <= sourceBuildDate) {
                 Log.d(TAG, "targetBuildDate: " + targetBuildDate + " not higher than sourceBuildDate: " + sourceBuildDate);
                 mUpdating = false;
@@ -320,6 +340,9 @@ public class Service extends IntentService {
             mUpdating = false;
             PeriodicJob.scheduleRetry(this);
         } finally {
+            if (System.currentTimeMillis() - getLastUpdateCheckTime > ONEDAY) {
+                notificationHandler.warnStaleOSVersionNotification();
+            }
             Log.d(TAG, "release wake locks");
             wakeLock.release();
             notificationHandler.cancelDownloadNotification();
