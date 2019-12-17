@@ -11,6 +11,10 @@
     <string name="notification_text_legacy">Please install the latest OS release.</string>
     <string name="notification_reboot_action">Reboot</string>
     <string name="notification_reboot_action_legacy">Reboot and install</string>
+    <string name="notification_update_fail">Update Error</string>
+    <string name="notification_update_fail_title">Error updating OS</string>
+    <string name="notification_update_fail_text">Please check your settings.</string>
+    <string name="notification_update_fail_details">Error details</string>
     <string name="settings_title">System update settings</string>
     <string name="channel_title">Release channel</string>
     <string name="channel_stable">Stable</string>
@@ -25,4 +29,10 @@
     <string name="idle_reboot_summary">Automatically reboot once the device is idle after successfully installing an update</string>
     <string name="check_for_updates_title">Check for updates</string>
     <string name="check_for_updates_summary">Tap to check for updates as soon as possible</string>
+    <string name="update_url_title">Update server URL</string>
+    <string name="update_interval_title">Update check interval</string>
+    <string name="update_interval_never">Never</string>
+    <string name="update_interval_4hour">4 hours</string>
+    <string name="update_interval_1day">1 day</string>
+    <string name="update_interval_1week">1 week</string>
 </resources>

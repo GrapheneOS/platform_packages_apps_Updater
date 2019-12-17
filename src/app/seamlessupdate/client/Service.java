@@ -62,7 +62,7 @@ public class Service extends IntentService {
     }
 
     private URLConnection fetchData(final String path) throws IOException {
-        final URL url = new URL(getString(R.string.url) + path);
+        final URL url = new URL(Settings.getUpdateURL(this) + path);
         final URLConnection urlConnection = url.openConnection();
         urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
         urlConnection.setReadTimeout(READ_TIMEOUT);
@@ -101,7 +101,7 @@ public class Service extends IntentService {
             Log.d(TAG, "streaming update test");
             final SharedPreferences preferences = Settings.getPreferences(this);
             final String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
-            engine.applyPayload(getString(R.string.url) + downloadFile, payloadOffset, 0, headerKeyValuePairs);
+            engine.applyPayload(Settings.getUpdateURL(this) + downloadFile, payloadOffset, 0, headerKeyValuePairs);
         } else {
             UPDATE_PATH.setReadable(true, false);
             engine.applyPayload("file://" + UPDATE_PATH, payloadOffset, 0, headerKeyValuePairs);
@@ -224,6 +224,7 @@ public class Service extends IntentService {
 
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        final SharedPreferences preferences = Settings.getPreferences(this);
         try {
             wakeLock.acquire();
 
@@ -231,7 +232,6 @@ public class Service extends IntentService {
                 Log.d(TAG, "updating already, returning early");
                 return;
             }
-            final SharedPreferences preferences = Settings.getPreferences(this);
             if (preferences.getBoolean(Settings.KEY_WAITING_FOR_REBOOT, false)) {
                 Log.d(TAG, "updated already, waiting for reboot");
                 return;
@@ -318,8 +318,15 @@ public class Service extends IntentService {
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
             mUpdating = false;
-            PeriodicJob.scheduleRetry(this);
+            notificationHandler.showUpdateFailNotification((String) e.getMessage());
+            if (Settings.getUpdateInterval(this) > 0) {
+                PeriodicJob.scheduleRetry(this);
+            }
         } finally {
+            if ((!preferences.getBoolean(Settings.KEY_WAITING_FOR_REBOOT, false))
+                    && (Settings.getUpdateInterval(this) < 0)) {
+                PeriodicJob.cancel(this);
+            }
             Log.d(TAG, "release wake locks");
             wakeLock.release();
             notificationHandler.cancelDownloadNotification();

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="url" translatable="false">s3bucket</string>
+    <string name="update_url_default" translatable="false">s3bucket</string>
+    <string name="update_interval_default">14400000</string>
     <string name="channel_default" translatable="false">stable</string>
     <string name="network_type_default" translatable="false">1</string>
     <string name="battery_not_low_default" translatable="false">false</string>

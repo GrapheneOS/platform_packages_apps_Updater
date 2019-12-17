@@ -8,6 +8,13 @@
             android:title="@string/check_for_updates_title"
             android:summary="@string/check_for_updates_summary" />
 
+    <ListPreference android:key="update_interval"
+            android:title="@string/update_interval_title"
+            android:summary="%s"
+            android:entries="@array/update_interval_entries"
+            android:entryValues="@array/update_interval_values"
+            android:defaultValue="@string/update_interval_default" />
+
     <ListPreference android:key="channel"
             android:title="@string/channel_title"
             android:summary="%s"
@@ -32,5 +39,11 @@
             android:title="@string/idle_reboot_title"
             android:summary="@string/idle_reboot_summary"
             android:defaultValue="@string/idle_reboot_default" />
+			
+    <EditTextPreference android:key="update_url"
+            android:enabled="false"
+            android:title="@string/update_url_title"
+            android:summary="@string/update_url_default"
+            android:defaultValue="@string/update_url_default" />
 
 </PreferenceScreen>

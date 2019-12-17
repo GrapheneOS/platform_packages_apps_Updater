@@ -11,7 +11,9 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         if (context.getSystemService(UserManager.class).isSystemUser()) {
             Settings.getPreferences(context).edit().putBoolean(Settings.KEY_WAITING_FOR_REBOOT, false).apply();
-            PeriodicJob.schedule(context);
+            if (Settings.getUpdateInterval(context) > 0) {
+                PeriodicJob.schedule(context);
+            }
         } else {
             context.getPackageManager().setApplicationEnabledSetting(context.getPackageName(),
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);

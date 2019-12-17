@@ -21,4 +21,18 @@
         <item>3</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="update_interval_entries" translatable="false">
+        <item>@string/update_interval_never</item>
+        <item>@string/update_interval_4hour</item>
+        <item>@string/update_interval_1day</item>
+        <item>@string/update_interval_1week</item>
+    </string-array>
+
+    <string-array name="update_interval_values" translatable="false">
+        <item>-1</item>
+        <item>14400000</item>
+        <item>86400000</item>
+        <item>604800000</item>
+    </string-array>	
 </resources>

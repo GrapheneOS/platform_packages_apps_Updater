@@ -15,8 +15,10 @@ public class NotificationHandler {
     private static final int NOTIFICATION_ID_DOWNLOAD = 1;
     private static final int NOTIFICATION_ID_INSTALL = 2;
     private static final int NOTIFICATION_ID_REBOOT = 3;
+    private static final int NOTIFICATION_ID_ERROR = 4;
     private static final String NOTIFICATION_CHANNEL_ID = "updates2";
     private static final String NOTIFICATION_CHANNEL_ID_PROGRESS = "progress";
+    private static final String NOTIFICATION_CHANNEL_ID_ERROR = "update_error";
     private static final int PENDING_REBOOT_ID = 1;
     private static final int PENDING_SETTINGS_ID = 2;
 
@@ -79,6 +81,28 @@ public class NotificationHandler {
 
     void cancelInstallNotification() {
         notificationManager.cancel(NOTIFICATION_ID_INSTALL);
+    }
+	
+    void showUpdateFailNotification(String errorText) {
+        String title = context.getString(R.string.notification_update_fail_title);
+        String text = context.getString(R.string.notification_update_fail_text);
+        String details = context.getString(R.string.notification_update_fail_details);
+        String expandedText = text.concat("\n").concat(details).concat(": ").concat(errorText);
+
+        final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_ERROR,
+                context.getString(R.string.notification_update_fail), NotificationManager.IMPORTANCE_HIGH);
+        channel.enableLights(true);
+        channel.enableVibration(true);
+        notificationManager.createNotificationChannel(channel);
+
+        notificationManager.notify(NOTIFICATION_ID_ERROR, new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_ERROR)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(title)
+                .setContentText(text)
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp)
+                .setStyle(new Notification.BigTextStyle()
+                        .bigText(expandedText))
+                .build());
     }
 
     private void createProgressNotificationChannel() {
