@@ -9,6 +9,9 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 public class Settings extends PreferenceActivity {
     private static final String KEY_CHANNEL = "channel";
     private static final String KEY_NETWORK_TYPE = "network_type";
@@ -16,6 +19,7 @@ public class Settings extends PreferenceActivity {
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
     private static final String KEY_CHECK_FOR_UDPATES = "check_for_updates";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
+    static final String KEY_LAST_UPDATE_CHECK_TIME = "last_update_check_time";
 
     static SharedPreferences getPreferences(final Context context) {
         final Context deviceContext = context.createDeviceProtectedStorageContext();
@@ -53,6 +57,17 @@ public class Settings extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
 
         final Preference checkForUpdates = findPreference(KEY_CHECK_FOR_UDPATES);
+        long def = Long.MAX_VALUE;
+        final long lastUpdateCheckTime = getPreferences(this).getLong(KEY_LAST_UPDATE_CHECK_TIME, def);
+        String checkForUpdateSummary;
+        if (lastUpdateCheckTime == Long.MAX_VALUE) {
+            checkForUpdateSummary = "Could not check for updates!";
+        } else {
+            final Date date = new Date(lastUpdateCheckTime);
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mmZ");
+            checkForUpdateSummary = "Last checked at " + sdf.format(date);
+        }
+        checkForUpdates.setSummary(checkForUpdateSummary);
         checkForUpdates.setOnPreferenceClickListener((final Preference preference) -> {
             if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
                 PeriodicJob.schedule(this, true);

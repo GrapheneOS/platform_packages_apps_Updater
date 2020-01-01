@@ -36,6 +36,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.Date;
+import java.lang.System;
 
 public class Service extends IntentService {
     private static final String TAG = "Service";
@@ -47,8 +48,6 @@ public class Service extends IntentService {
     private static final int HTTP_RANGE_NOT_SATISFIABLE = 416;
     private static final long ONEDAY = 86400000L;
 
-    private static final String UPDATER_MAP = "updater_map";
-    private static final String LAST_UPDATE_CHECK_TIME_KEY = "last_update_check_time";
 
     private NotificationHandler notificationHandler;
     private boolean mUpdating = false;
@@ -225,15 +224,15 @@ public class Service extends IntentService {
     }
 
     private void setLastUpdateCheckTime() {
-        final SharedPreferences preferences = getPreferences(UPDATER_MAP, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putLong(LAST_UPDATE_CHECK_TIME_KEY, System.currentTimeMillis);
-        editor.apply();
+        final SharedPreferences preferences = Settings.getPreferences(this);
+        preferences.edit()
+            .putLong(Settings.KEY_LAST_UPDATE_CHECK_TIME, System.currentTimeMillis())
+            .apply();
     }
 
     private long getLastUpdateCheckTime() {
-        final SharedPreferences preferences = getPreferences(UPDATER_MAP, MODE_PRIVATE);
-        return preferences.getLong(LAST_UPDATE_CHECK_TIME_KEY, Long.MAX_VALUE);
+        final SharedPreferences preferences = Settings.getPreferences(this);
+        return preferences.getLong(Settings.KEY_LAST_UPDATE_CHECK_TIME, Long.MAX_VALUE);
     }
 
     @Override
@@ -250,7 +249,7 @@ public class Service extends IntentService {
                 Log.d(TAG, "updating already, returning early");
                 return;
             }
-            final SharedPreferences preferences = getPreferences(R.string, MODE_PRIVATE)
+            final SharedPreferences preferences = Settings.getPreferences(this);
             if (preferences.getBoolean(Settings.KEY_WAITING_FOR_REBOOT, false)) {
                 Log.d(TAG, "updated already, waiting for reboot");
                 return;
@@ -340,7 +339,7 @@ public class Service extends IntentService {
             mUpdating = false;
             PeriodicJob.scheduleRetry(this);
         } finally {
-            if (System.currentTimeMillis() - getLastUpdateCheckTime > ONEDAY) {
+            if (System.currentTimeMillis() - getLastUpdateCheckTime() > ONEDAY) {
                 notificationHandler.warnStaleOSVersionNotification();
             }
             Log.d(TAG, "release wake locks");
