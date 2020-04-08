@@ -6,11 +6,8 @@
     <string name="notification_download_title">Downloading system update</string>
     <string name="notification_install_title">Installing system update</string>
     <string name="notification_title">Update successfully installed</string>
-    <string name="notification_title_legacy">Update successfully downloaded</string>
     <string name="notification_text">Please reboot the device to run the latest OS release.</string>
-    <string name="notification_text_legacy">Please install the latest OS release.</string>
     <string name="notification_reboot_action">Reboot</string>
-    <string name="notification_reboot_action_legacy">Reboot and install</string>
     <string name="settings_title">System update settings</string>
     <string name="channel_title">Release channel</string>
     <string name="channel_stable">Stable</string>

@@ -3,6 +3,5 @@
     <privapp-permissions package="app.seamlessupdate.client">
         <permission name="android.permission.ACCESS_CACHE_FILESYSTEM"/>
         <permission name="android.permission.REBOOT"/>
-        <permission name="android.permission.RECOVERY"/>
     </privapp-permissions>
 </permissions>

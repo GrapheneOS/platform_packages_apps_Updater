@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import static android.app.NotificationManager.IMPORTANCE_LOW;
-import static app.seamlessupdate.client.Service.isAbUpdate;
 
 public class NotificationHandler {
 
@@ -46,9 +45,6 @@ public class NotificationHandler {
     }
 
     void showRebootNotification() {
-        final String title = context.getString(isAbUpdate() ? R.string.notification_title : R.string.notification_title_legacy);
-        final String text = context.getString(isAbUpdate() ? R.string.notification_text : R.string.notification_text_legacy);
-        final String rebootText = context.getString(isAbUpdate() ? R.string.notification_reboot_action : R.string.notification_reboot_action_legacy);
         final PendingIntent reboot = PendingIntent.getBroadcast(context, PENDING_REBOOT_ID, new Intent(context, RebootReceiver.class), 0);
 
         final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
@@ -57,10 +53,10 @@ public class NotificationHandler {
         channel.enableVibration(true);
         notificationManager.createNotificationChannel(channel);
         notificationManager.notify(NOTIFICATION_ID_REBOOT, new Notification.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .addAction(R.drawable.ic_restart, rebootText, reboot)
+                .addAction(R.drawable.ic_restart, context.getString(R.string.notification_reboot_action), reboot)
                 .setContentIntent(getPendingSettingsIntent())
-                .setContentTitle(title)
-                .setContentText(text)
+                .setContentTitle(context.getString(R.string.notification_title))
+                .setContentText(context.getString(R.string.notification_text))
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
