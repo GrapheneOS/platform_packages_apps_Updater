@@ -241,7 +241,14 @@ public class Service extends IntentService {
             final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(this));
 
             Log.d(TAG, "fetching metadata for " + DEVICE + "-" + channel);
-            InputStream input = fetchData(DEVICE + "-" + channel).getInputStream();
+            InputStream input;
+            try {
+                input = fetchData(DEVICE + "-" + channel).getInputStream();
+            } catch (IOException e) {
+                Log.e(TAG, "could not connect to update server");
+                mUpdating = false;
+                throw e;
+            }
             final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             final String[] metadata = reader.readLine().split(" ");
             reader.close();
@@ -317,8 +324,10 @@ public class Service extends IntentService {
             onDownloadFinished(targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
+            if (mUpdating) {
+                notificationHandler.showUpdateFailNotification((String) e.getMessage());
+            }
             mUpdating = false;
-            notificationHandler.showUpdateFailNotification((String) e.getMessage());
             if (Settings.getUpdateInterval(this) > 0) {
                 PeriodicJob.scheduleRetry(this);
             }
