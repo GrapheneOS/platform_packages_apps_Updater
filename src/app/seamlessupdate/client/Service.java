@@ -51,10 +51,6 @@ public class Service extends IntentService {
         super(TAG);
     }
 
-    static boolean isAbUpdate() {
-        return SystemProperties.getBoolean("ro.build.ab_update", false);
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -167,19 +163,14 @@ public class Service extends IntentService {
                     throw new GeneralSecurityException("serialno mismatch");
                 }
             }
-            if ("AB".equals(type) != isAbUpdate()) {
-                throw new GeneralSecurityException("update type does not match device");
+            if (!"AB".equals(type)) {
+                throw new GeneralSecurityException("package is not an A/B update");
             }
             if (sourceIncremental != null && !sourceIncremental.equals(INCREMENTAL)) {
                 throw new GeneralSecurityException("source incremental mismatch");
             }
             if (sourceFingerprint != null && !sourceFingerprint.equals(FINGERPRINT)) {
                 throw new GeneralSecurityException("source fingerprint mismatch");
-            }
-
-            if (!isAbUpdate()) {
-                annoyUser();
-                return;
             }
 
             long payloadOffset = 0;
