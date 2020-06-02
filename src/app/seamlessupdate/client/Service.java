@@ -245,6 +245,10 @@ public class Service extends IntentService {
                 mUpdating = false;
                 return;
             }
+            final String targetChannel = metadata[3];
+            if (!targetChannel.equals(channel)) {
+                throw new GeneralSecurityException("targetChannel: " + targetChannel + " does not match channel: " + channel);
+            }
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded = UPDATE_PATH.length();
