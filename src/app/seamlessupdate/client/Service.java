@@ -40,7 +40,7 @@ public class Service extends IntentService {
     private static final int CONNECT_TIMEOUT = 60000;
     private static final int READ_TIMEOUT = 60000;
     private static final File CARE_MAP_PATH = new File("/data/ota_package/care_map.txt");
-    static final File UPDATE_PATH = new File("/data/ota_package/update.zip");
+    private static final File UPDATE_PATH = new File("/data/ota_package/update.zip");
     private static final String PREFERENCE_DOWNLOAD_FILE = "download_file";
     private static final int HTTP_RANGE_NOT_SATISFIABLE = 416;
 
