@@ -65,7 +65,7 @@ public class Service extends IntentService {
         return urlConnection;
     }
 
-    private void applyUpdate(final long payloadOffset, final String[] headerKeyValuePairs) {
+    private void applyUpdate(final boolean streaming, final long payloadOffset, final String[] headerKeyValuePairs) {
         final CountDownLatch monitor = new CountDownLatch(1);
         final UpdateEngine engine = new UpdateEngine();
         engine.bind(new UpdateEngineCallback() {
@@ -93,10 +93,9 @@ public class Service extends IntentService {
                 monitor.countDown();
             }
         });
-        if (SystemProperties.getBoolean("sys.update.streaming_test", false)) {
-            Log.d(TAG, "streaming update test");
+        if (streaming) {
             final SharedPreferences preferences = Settings.getPreferences(this);
-            final String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
+            final String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE.replace("-streaming", ""), null);
             engine.applyPayload(getString(R.string.url) + downloadFile, payloadOffset, 0, headerKeyValuePairs);
         } else {
             UPDATE_PATH.setReadable(true, false);
@@ -115,7 +114,7 @@ public class Service extends IntentService {
         return entry;
     }
 
-    private void onDownloadFinished(final long targetBuildDate, final String channel) throws IOException, GeneralSecurityException {
+    private void onDownloadFinished(final boolean streaming, final long targetBuildDate, final String channel) throws IOException, GeneralSecurityException {
         try {
             RecoverySystem.verifyPackage(UPDATE_PATH,
                 (int progress) -> Log.d(TAG, "verifyPackage: " + progress + "%"), null);
@@ -192,7 +191,7 @@ public class Service extends IntentService {
 
             final ZipEntry payloadProperties = getEntry(zipFile, "payload_properties.txt");
             final BufferedReader propertiesReader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(payloadProperties)));
-            applyUpdate(payloadOffset, propertiesReader.lines().toArray(String[]::new));
+            applyUpdate(streaming, payloadOffset, propertiesReader.lines().toArray(String[]::new));
         } catch (GeneralSecurityException e) {
             UPDATE_PATH.delete();
             throw e;
@@ -254,8 +253,11 @@ public class Service extends IntentService {
             long downloaded = UPDATE_PATH.length();
             int contentLength;
 
-            final String incrementalUpdate = DEVICE + "-incremental-" + INCREMENTAL + "-" + targetIncremental + ".zip";
-            final String fullUpdate = DEVICE + "-ota_update-" + targetIncremental + ".zip";
+            final boolean streaming = SystemProperties.getBoolean("sys.update.streaming_test", false);
+
+            final String streamingPrefix = streaming ? "-streaming" : "";
+            final String incrementalUpdate = DEVICE + streamingPrefix + "-incremental-" + INCREMENTAL + "-" + targetIncremental + ".zip";
+            final String fullUpdate = DEVICE + streamingPrefix + "-ota_update-" + targetIncremental + ".zip";
 
             if (incrementalUpdate.equals(downloadFile) || fullUpdate.equals(downloadFile)) {
                 Log.d(TAG, "resume fetch of " + downloadFile + " from " + downloaded + " bytes");
@@ -263,7 +265,7 @@ public class Service extends IntentService {
                 connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
                 if (connection.getResponseCode() == HTTP_RANGE_NOT_SATISFIABLE) {
                     Log.d(TAG, "download completed previously");
-                    onDownloadFinished(targetBuildDate, channel);
+                    onDownloadFinished(streaming, targetBuildDate, channel);
                     return;
                 }
                 contentLength = connection.getContentLength() + (int) downloaded;
@@ -309,7 +311,7 @@ public class Service extends IntentService {
 
             Log.d(TAG, "download completed");
             notificationHandler.cancelDownloadNotification();
-            onDownloadFinished(targetBuildDate, channel);
+            onDownloadFinished(streaming, targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
             mUpdating = false;
