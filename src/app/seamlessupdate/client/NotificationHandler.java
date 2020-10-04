@@ -45,7 +45,8 @@ public class NotificationHandler {
     }
 
     void showRebootNotification() {
-        final PendingIntent reboot = PendingIntent.getBroadcast(context, PENDING_REBOOT_ID, new Intent(context, RebootReceiver.class), 0);
+        final PendingIntent reboot = PendingIntent.getBroadcast(context, PENDING_REBOOT_ID,
+                        new Intent(context, RebootReceiver.class), PendingIntent.FLAG_IMMUTABLE);
 
         final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                 context.getString(R.string.notification_channel), NotificationManager.IMPORTANCE_HIGH);
@@ -84,7 +85,8 @@ public class NotificationHandler {
     }
 
     private PendingIntent getPendingSettingsIntent() {
-        return PendingIntent.getActivity(context, PENDING_SETTINGS_ID, new Intent(context, Settings.class), 0);
+        return PendingIntent.getActivity(context, PENDING_SETTINGS_ID, new Intent(context,
+                                Settings.class), PendingIntent.FLAG_IMMUTABLE);
     }
 
 }
