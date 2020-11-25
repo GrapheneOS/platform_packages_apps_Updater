@@ -155,12 +155,7 @@ public class Service extends IntentService {
                 throw new GeneralSecurityException("device mismatch");
             }
             if (serialno != null) {
-                if ("stable".equals(channel) || "beta".equals(channel)) {
-                    throw new GeneralSecurityException("serialno constraint not permitted for channel " + channel);
-                }
-                if (!serialno.equals(Build.getSerial())) {
-                    throw new GeneralSecurityException("serialno mismatch");
-                }
+                throw new GeneralSecurityException("serialno constraint not permitted");
             }
             if (!"AB".equals(type)) {
                 throw new GeneralSecurityException("package is not an A/B update");

@@ -6,17 +6,9 @@ android_app {
     platform_apis: true,
     privileged: true,
     required: [
-        "default-permissions_app.seamlessupdate.client.xml",
         "permissions_app.seamlessupdate.client.xml",
         "whitelist_app.seamlessupdate.client.xml"
     ]
-}
-
-prebuilt_etc {
-    name: "default-permissions_app.seamlessupdate.client.xml",
-    sub_dir: "default-permissions",
-    src: "default-permissions_app.seamlessupdate.client.xml",
-    filename_from_src: true,
 }
 
 prebuilt_etc {
