@@ -286,23 +286,23 @@ public class Service extends IntentService {
 
             notificationHandler.showDownloadNotification((int) downloaded, contentLength);
 
-            final OutputStream output = new FileOutputStream(UPDATE_PATH, downloaded != 0);
-            preferences.edit().putString(PREFERENCE_DOWNLOAD_FILE, downloadFile).commit();
+            try (final OutputStream output = new FileOutputStream(UPDATE_PATH, downloaded != 0)) {
+                preferences.edit().putString(PREFERENCE_DOWNLOAD_FILE, downloadFile).commit();
 
-            int bytesRead;
-            long last = System.nanoTime();
-            final byte[] buffer = new byte[8192];
-            while ((bytesRead = input.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
-                downloaded += bytesRead;
-                final long now = System.nanoTime();
-                if (now - last > 1000 * 1000 * 1000) {
-                    Log.d(TAG, "downloaded " + downloaded + " from " + contentLength + " bytes");
-                    notificationHandler.showDownloadNotification((int) downloaded, contentLength);
-                    last = now;
+                int bytesRead;
+                long last = System.nanoTime();
+                final byte[] buffer = new byte[8192];
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                    downloaded += bytesRead;
+                    final long now = System.nanoTime();
+                    if (now - last > 1000 * 1000 * 1000) {
+                        Log.d(TAG, "downloaded " + downloaded + " from " + contentLength + " bytes");
+                        notificationHandler.showDownloadNotification((int) downloaded, contentLength);
+                        last = now;
+                    }
                 }
             }
-            output.close();
 
             Log.d(TAG, "download completed");
             notificationHandler.cancelDownloadNotification();
