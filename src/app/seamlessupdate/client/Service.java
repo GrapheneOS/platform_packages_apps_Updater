@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.CountDownLatch;
@@ -57,9 +56,9 @@ public class Service extends IntentService {
         notificationHandler = new NotificationHandler(this);
     }
 
-    private URLConnection fetchData(final String path) throws IOException {
+    private HttpURLConnection fetchData(final String path) throws IOException {
         final URL url = new URL(getString(R.string.url) + path);
-        final URLConnection urlConnection = url.openConnection();
+        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
         urlConnection.setReadTimeout(READ_TIMEOUT);
         return urlConnection;
@@ -209,6 +208,7 @@ public class Service extends IntentService {
 
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        HttpURLConnection connection = null;
         try {
             wakeLock.acquire();
 
@@ -226,7 +226,8 @@ public class Service extends IntentService {
             final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(this));
 
             Log.d(TAG, "fetching metadata for " + DEVICE + "-" + channel);
-            InputStream input = fetchData(DEVICE + "-" + channel).getInputStream();
+            connection = fetchData(DEVICE + "-" + channel);
+            InputStream input = connection.getInputStream();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             final String[] metadata = reader.readLine().split(" ");
             reader.close();
@@ -256,7 +257,7 @@ public class Service extends IntentService {
 
             if (incrementalUpdate.equals(downloadFile) || fullUpdate.equals(downloadFile)) {
                 Log.d(TAG, "resume fetch of " + downloadFile + " from " + downloaded + " bytes");
-                final HttpURLConnection connection = (HttpURLConnection) fetchData(downloadFile);
+                connection = fetchData(downloadFile);
                 connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
                 if (connection.getResponseCode() == HTTP_RANGE_NOT_SATISFIABLE) {
                     Log.d(TAG, "download completed previously");
@@ -269,13 +270,13 @@ public class Service extends IntentService {
                 try {
                     Log.d(TAG, "fetch incremental " + incrementalUpdate);
                     downloadFile = incrementalUpdate;
-                    final URLConnection connection = fetchData(downloadFile);
+                    connection = fetchData(downloadFile);
                     contentLength = connection.getContentLength();
                     input = connection.getInputStream();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     Log.d(TAG, "incremental not found, fetch full update " + fullUpdate);
                     downloadFile = fullUpdate;
-                    final URLConnection connection = fetchData(downloadFile);
+                    connection = fetchData(downloadFile);
                     contentLength = connection.getContentLength();
                     input = connection.getInputStream();
                 }
@@ -302,7 +303,6 @@ public class Service extends IntentService {
                 }
             }
             output.close();
-            input.close();
 
             Log.d(TAG, "download completed");
             notificationHandler.cancelDownloadNotification();
@@ -314,6 +314,9 @@ public class Service extends IntentService {
         } finally {
             Log.d(TAG, "release wake locks");
             wakeLock.release();
+            if (connection != null) {
+                connection.disconnect();
+            }
             notificationHandler.cancelDownloadNotification();
             notificationHandler.cancelInstallNotification();
             TriggerUpdateReceiver.completeWakefulIntent(intent);
