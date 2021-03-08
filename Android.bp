@@ -2,7 +2,7 @@ android_app {
     name: "Updater",
     srcs: ["src/**/*.java"],
     resource_dirs: ["res"],
-    static_libs: ["android-support-v4"],
+    static_libs: ["androidx.legacy_legacy-support-v4"],
     platform_apis: true,
     privileged: true,
     required: [
