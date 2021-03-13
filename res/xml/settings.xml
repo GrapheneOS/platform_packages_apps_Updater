@@ -1,36 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        android:title="@string/settings_title"
-        xmlns:settings="http://schemas.android.com/apk/res/com.android.settings">
+    <Preference app:key="check_for_updates"
+            app:title="@string/check_for_updates_title"
+            app:summary="@string/check_for_updates_summary" />
 
-    <Preference android:key="check_for_updates"
-            android:title="@string/check_for_updates_title"
-            android:summary="@string/check_for_updates_summary" />
+    <ListPreference app:key="channel"
+            app:title="@string/channel_title"
+            app:useSimpleSummaryProvider="true"
+            app:entries="@array/channel_entries"
+            app:entryValues="@array/channel_values"
+            app:defaultValue="@string/channel_default" />
 
-    <ListPreference android:key="channel"
-            android:title="@string/channel_title"
-            android:summary="%s"
-            android:entries="@array/channel_entries"
-            android:entryValues="@array/channel_values"
-            android:defaultValue="@string/channel_default" />
+    <ListPreference app:key="network_type"
+            app:persistent="false"
+            app:title="@string/network_type_title"
+            app:useSimpleSummaryProvider="true"
+            app:entries="@array/network_type_entries"
+            app:entryValues="@array/network_type_values"
+            app:defaultValue="@string/network_type_default" />
 
-    <ListPreference android:key="network_type"
-            android:persistent="false"
-            android:title="@string/network_type_title"
-            android:summary="%s"
-            android:entries="@array/network_type_entries"
-            android:entryValues="@array/network_type_values"
-            android:defaultValue="@string/network_type_default" />
+    <SwitchPreferenceCompat app:key="battery_not_low"
+            app:title="@string/battery_not_low_title"
+            app:summaryOn="@string/battery_not_low_summary_on"
+            app:summaryOff="@string/battery_not_low_summary_off"
+            app:defaultValue="@string/battery_not_low_default" />
 
-    <SwitchPreference android:key="battery_not_low"
-            android:title="@string/battery_not_low_title"
-            android:summary="@string/battery_not_low_summary"
-            android:defaultValue="@string/battery_not_low_default" />
-
-    <SwitchPreference android:key="idle_reboot"
-            android:title="@string/idle_reboot_title"
-            android:summary="@string/idle_reboot_summary"
-            android:defaultValue="@string/idle_reboot_default" />
+    <SwitchPreferenceCompat app:key="idle_reboot"
+            app:title="@string/idle_reboot_title"
+            app:summaryOn="@string/idle_reboot_summary_on"
+            app:summaryOff="@string/idle_reboot_summary_off"
+            app:defaultValue="@string/idle_reboot_default" />
 
 </PreferenceScreen>
