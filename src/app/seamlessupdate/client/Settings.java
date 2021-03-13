@@ -4,12 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.UserManager;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.view.MenuItem;
 
-public class Settings extends PreferenceActivity {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.preference.Preference;
+import androidx.preference.ListPreference;
+
+public class Settings extends AppCompatActivity {
     private static final String KEY_CHANNEL = "channel";
     private static final String KEY_NETWORK_TYPE = "network_type";
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
@@ -43,65 +49,96 @@ public class Settings extends PreferenceActivity {
     }
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!UserManager.get(this).isSystemUser()) {
+        UserManager userManager = (UserManager) getSystemService(USER_SERVICE);
+        if (!userManager.isSystemUser()) {
             throw new SecurityException("system user only");
         }
-        getPreferenceManager().setStorageDeviceProtected();
-        PreferenceManager.setDefaultValues(createDeviceProtectedStorageContext(), R.xml.settings, false);
-        addPreferencesFromResource(R.xml.settings);
-
-        final Preference checkForUpdates = findPreference(KEY_CHECK_FOR_UDPATES);
-        checkForUpdates.setOnPreferenceClickListener((final Preference preference) -> {
-            if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
-                PeriodicJob.schedule(this, true);
-            }
-            return true;
-        });
-
-        final Preference channel = findPreference(KEY_CHANNEL);
-        channel.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
-            getPreferences(this).edit().putString(KEY_CHANNEL,(String) newValue).apply();
-            if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
-                PeriodicJob.schedule(this);
-            }
-            return true;
-        });
-
-        final Preference networkType = findPreference(KEY_NETWORK_TYPE);
-        networkType.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
-            final int value = Integer.parseInt((String) newValue);
-            getPreferences(this).edit().putInt(KEY_NETWORK_TYPE, value).apply();
-            if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
-                PeriodicJob.schedule(this);
-            }
-            return true;
-        });
-
-        final Preference batteryNotLow = findPreference(KEY_BATTERY_NOT_LOW);
-        batteryNotLow.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
-            getPreferences(this).edit().putBoolean(KEY_BATTERY_NOT_LOW, (boolean) newValue).apply();
-            if (!getPreferences(this).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
-                PeriodicJob.schedule(this);
-            }
-            return true;
-        });
-
-        final Preference idleReboot = findPreference(KEY_IDLE_REBOOT);
-        idleReboot.setOnPreferenceChangeListener((final Preference preference, final Object newValue) -> {
-            final boolean value = (Boolean) newValue;
-            if (!value) {
-                IdleReboot.cancel(this);
-            }
-            return true;
-        });
+        setContentView(R.layout.activity_settings);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.settings, new SettingsFragment())
+                    .commit();
+        }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        final ListPreference networkType = (ListPreference) findPreference(KEY_NETWORK_TYPE);
-        networkType.setValue(Integer.toString(getNetworkType(this)));
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Closes the activity when the up action is clicked
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static class SettingsFragment extends PreferenceFragmentCompat
+            implements SharedPreferences.OnSharedPreferenceChangeListener {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            getPreferenceManager().setStorageDeviceProtected();
+            setPreferencesFromResource(R.xml.settings, rootKey);
+
+            Preference.OnPreferenceClickListener clickListener = preference -> {
+                if (!getPreferences(requireContext()).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
+                    PeriodicJob.schedule(requireContext(), true);
+                }
+                return true;
+            };
+            final Preference checkForUpdates = findPreference(KEY_CHECK_FOR_UDPATES);
+            if (checkForUpdates != null) {
+                checkForUpdates.setOnPreferenceClickListener(clickListener);
+            }
+
+            Preference.OnPreferenceChangeListener changeListener = (preference, newValue) -> {
+                final int value = Integer.parseInt((String) newValue);
+                getPreferences(requireContext()).edit().putInt(KEY_NETWORK_TYPE, value).apply();
+                if (!getPreferences(requireContext()).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
+                    PeriodicJob.schedule(requireContext());
+                }
+                return true;
+            };
+            final Preference networkType = findPreference(KEY_NETWORK_TYPE);
+            if (networkType != null) {
+                networkType.setOnPreferenceChangeListener(changeListener);
+            }
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            switch (key) {
+                case KEY_CHANNEL:
+                case KEY_BATTERY_NOT_LOW:
+                    if (!getPreferences(requireContext()).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
+                        PeriodicJob.schedule(requireContext());
+                    }
+                    break;
+                case KEY_IDLE_REBOOT:
+                    if (!getIdleReboot(requireContext())) {
+                        IdleReboot.cancel(requireContext());
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+            final ListPreference networkType = (ListPreference) findPreference(KEY_NETWORK_TYPE);
+            networkType.setValue(Integer.toString(getNetworkType(requireContext())));
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        }
     }
 }
