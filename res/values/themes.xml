@@ -15,6 +15,11 @@
         <item name="android:windowLightStatusBar">true</item>
         <!-- Action bar theme. -->
         <item name="actionBarTheme">@style/ActionBar</item>
+        <!-- Navigation bar. -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:navigationBarDividerColor">@*android:color/navigation_bar_divider_device_default_settings</item>
     </style>
 
     <!-- Action bar style. -->
