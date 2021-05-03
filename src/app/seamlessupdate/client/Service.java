@@ -9,6 +9,7 @@ import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RecoverySystem;
@@ -258,6 +259,10 @@ public class Service extends IntentService {
             final String targetChannel = metadata[3];
             if (!targetChannel.equals(channel)) {
                 throw new GeneralSecurityException("targetChannel: " + targetChannel + " does not match channel: " + channel);
+            }
+            final String targetDevice = metadata[4];
+            if (!DEVICE.equals(targetDevice)) {
+                throw new GeneralSecurityException("targetDevice: " + targetDevice + " does not match device: " + DEVICE);
             }
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
