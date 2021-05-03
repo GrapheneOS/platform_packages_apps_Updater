@@ -9,7 +9,6 @@ import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RecoverySystem;
@@ -17,6 +16,7 @@ import android.os.SystemProperties;
 import android.os.UpdateEngine;
 import android.os.UpdateEngine.ErrorCodeConstants;
 import android.os.UpdateEngineCallback;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -229,9 +229,24 @@ public class Service extends IntentService {
             connection = fetchData(DEVICE + "-" + channel);
             InputStream input = connection.getInputStream();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            final String[] metadata = reader.readLine().split(" ");
+            final String metadataString = reader.readLine();
+            final String signatureString = reader.readLine();
             reader.close();
 
+            if (signatureString == null) {
+                throw new GeneralSecurityException("missing signature");
+            }
+            final byte[] signature;
+            try {
+                signature = Base64.decode(signatureString, Base64.DEFAULT);
+            } catch (IllegalArgumentException e) {
+                throw new GeneralSecurityException("signature has invalid base64 encoding");
+            }
+
+            Log.d(TAG, "verifying metadata");
+            MetadataSignatureVerifier.verifyMetadata(metadataString.getBytes(), signature);
+
+            final String[] metadata = metadataString.split(" ");
             final String targetIncremental = metadata[0];
             final long targetBuildDate = Long.parseLong(metadata[1]);
             final long sourceBuildDate = SystemProperties.getLong("ro.build.date.utc", 0);
