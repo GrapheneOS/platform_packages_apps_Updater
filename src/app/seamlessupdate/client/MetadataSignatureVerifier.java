@@ -1,5 +1,6 @@
 package app.seamlessupdate.client;
 
+import android.annotation.NonNull;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -16,6 +17,8 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -29,8 +32,23 @@ public class MetadataSignatureVerifier {
     /**
      * Determined by the script the generates keys: development/tools/make_key;
      * and the script used to generate metadata: script/generate_metadata.py
+     * 
+     * For RSA, RSASSA-PSS is required by PKCS#1 for new applications.
      **/
-    private static final String SIGNING_ALGORITHM = "SHA256withRSA/PSS";
+    private static final String RSA_SIGNING_ALGORITHM = "SHA256withRSA/PSS";
+    private static final String ECDSA_SIGNING_ALGORITHM = "SHA256withECDSA";
+
+    private static String getSigningAlgorithm(@NonNull PublicKey publicKey)
+            throws GeneralSecurityException {
+        if (publicKey instanceof RSAPublicKey) {
+            return RSA_SIGNING_ALGORITHM;
+        } else if (publicKey instanceof ECPublicKey) {
+            return ECDSA_SIGNING_ALGORITHM;
+        } else {
+            throw new GeneralSecurityException("got unsupported public key algorithm: " +
+                    publicKey.getAlgorithm());
+        }
+    }
 
     @Nullable
     private static PublicKey getPubKeyFromOTACertsZip() {
@@ -69,11 +87,12 @@ public class MetadataSignatureVerifier {
             }
         }
 
+        final String signingAlgorithm = getSigningAlgorithm(releasePublicKey);
         final Signature verifier;
         try {
-            verifier = Signature.getInstance(SIGNING_ALGORITHM);
+            verifier = Signature.getInstance(signingAlgorithm);
         } catch (NoSuchAlgorithmException e) {
-            throw new GeneralSecurityException("failed to get an instance of " + SIGNING_ALGORITHM);
+            throw new GeneralSecurityException("failed to get an instance of " + signingAlgorithm);
         }
 
         try {
