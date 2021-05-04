@@ -20,13 +20,12 @@
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@color/white</item>
         <item name="android:navigationBarDividerColor">@*android:color/navigation_bar_divider_device_default_settings</item>
-        <!-- Background color. -->
-        <item name="android:background">@*android:color/background_device_default_light</item>
+        <!-- Window background color. -->
+        <item name="android:windowBackground">@*android:color/background_device_default_light</item>
     </style>
 
     <!-- Action bar style. -->
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:background">@color/grey_100</item>
+        <item name="colorPrimary">@color/grey_100</item>
     </style>
 </resources>
