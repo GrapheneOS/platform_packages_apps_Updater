@@ -2,12 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.SeamlessUpdateClient" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_600</item>
-        <item name="colorPrimaryVariant">@color/blue_600</item>
+        <item name="colorPrimary">@*android:color/accent_device_default_light</item>
+        <item name="colorPrimaryVariant">@*android:color/accent_device_default_light</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue_600</item>
-        <item name="colorSecondaryVariant">@color/blue_600</item>
+        <item name="colorSecondary">@*android:color/accent_device_default_light</item>
+        <item name="colorSecondaryVariant">@*android:color/accent_device_default_light</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/grey_300</item>
