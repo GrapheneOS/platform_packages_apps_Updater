@@ -80,7 +80,6 @@ public class Service extends IntentService {
 
             @Override
             public void onPayloadApplicationComplete(int errorCode) {
-                notificationHandler.cancelProgressNotification();
                 if (errorCode == ErrorCodeConstants.SUCCESS) {
                     Log.d(TAG, "onPayloadApplicationComplete success");
                     annoyUser();
@@ -119,8 +118,6 @@ public class Service extends IntentService {
                 Log.d(TAG, "verifyPackage: " + progress + "%");
                 notificationHandler.showVerifyNotification(progress, 100);
             }, null);
-
-            notificationHandler.cancelProgressNotification();
 
             final ZipFile zipFile = new ZipFile(UPDATE_PATH);
 
@@ -309,7 +306,6 @@ public class Service extends IntentService {
             }
 
             Log.d(TAG, "download completed");
-            notificationHandler.cancelProgressNotification();
             onDownloadFinished(streaming, targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
