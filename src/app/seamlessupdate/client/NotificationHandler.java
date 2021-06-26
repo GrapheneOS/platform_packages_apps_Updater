@@ -10,7 +10,6 @@ import android.content.Intent;
 import static android.app.NotificationManager.IMPORTANCE_LOW;
 
 public class NotificationHandler {
-
     private static final int NOTIFICATION_ID_PROGRESS = 1;
     private static final int NOTIFICATION_ID_REBOOT = 2;
     private static final String NOTIFICATION_CHANNEL_ID = "updates2";
@@ -24,7 +23,10 @@ public class NotificationHandler {
     NotificationHandler(Context context) {
         this.context = context;
         this.notificationManager = context.getSystemService(NotificationManager.class);
-        createProgressNotificationChannel();
+
+        final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_PROGRESS,
+                context.getString(R.string.notification_channel_progress), IMPORTANCE_LOW);
+        notificationManager.createNotificationChannel(channel);
     }
 
     void showDownloadNotification(int progress, int max) {
@@ -37,6 +39,21 @@ public class NotificationHandler {
         if (max <= 0) builder.setProgress(0, 0, true);
         else builder.setProgress(max, progress, false);
         notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
+    }
+
+    void showInstallNotification(int progress, int max) {
+        String title = context.getString(R.string.notification_install_title);
+        Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(title)
+                .setOngoing(true)
+                .setProgress(max, progress, false)
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp);
+        notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
+    }
+
+    void cancelProgressNotification() {
+        notificationManager.cancel(NOTIFICATION_ID_PROGRESS);
     }
 
     void showRebootNotification() {
@@ -58,30 +75,8 @@ public class NotificationHandler {
                 .build());
     }
 
-    void showInstallNotification(int progress, int max) {
-        String title = context.getString(R.string.notification_install_title);
-        Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
-                .setContentIntent(getPendingSettingsIntent())
-                .setContentTitle(title)
-                .setOngoing(true)
-                .setProgress(max, progress, false)
-                .setSmallIcon(R.drawable.ic_system_update_white_24dp);
-        notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
-    }
-
-    void cancelProgressNotification() {
-        notificationManager.cancel(NOTIFICATION_ID_PROGRESS);
-    }
-
-    private void createProgressNotificationChannel() {
-        final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_PROGRESS,
-                context.getString(R.string.notification_channel_progress), IMPORTANCE_LOW);
-        notificationManager.createNotificationChannel(channel);
-    }
-
     private PendingIntent getPendingSettingsIntent() {
         return PendingIntent.getActivity(context, PENDING_SETTINGS_ID, new Intent(context,
                                 Settings.class), PendingIntent.FLAG_IMMUTABLE);
     }
-
 }
