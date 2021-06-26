@@ -41,6 +41,17 @@ public class NotificationHandler {
         notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
     }
 
+    void showVerifyNotification(int progress, int max) {
+        String title = context.getString(R.string.notification_verify_title);
+        Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(title)
+                .setOngoing(true)
+                .setProgress(max, progress, false)
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp);
+        notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
+    }
+
     void showInstallNotification(int progress, int max) {
         String title = context.getString(R.string.notification_install_title);
         Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)

@@ -115,8 +115,12 @@ public class Service extends IntentService {
 
     private void onDownloadFinished(final boolean streaming, final long targetBuildDate, final String channel) throws IOException, GeneralSecurityException {
         try {
-            RecoverySystem.verifyPackage(UPDATE_PATH,
-                (int progress) -> Log.d(TAG, "verifyPackage: " + progress + "%"), null);
+            RecoverySystem.verifyPackage(UPDATE_PATH, (int progress) -> {
+                Log.d(TAG, "verifyPackage: " + progress + "%");
+                notificationHandler.showVerifyNotification(progress, 100);
+            }, null);
+
+            notificationHandler.cancelProgressNotification();
 
             final ZipFile zipFile = new ZipFile(UPDATE_PATH);
 
