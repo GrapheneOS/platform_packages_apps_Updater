@@ -80,7 +80,7 @@ public class Service extends IntentService {
 
             @Override
             public void onPayloadApplicationComplete(int errorCode) {
-                notificationHandler.cancelInstallNotification();
+                notificationHandler.cancelProgressNotification();
                 if (errorCode == ErrorCodeConstants.SUCCESS) {
                     Log.d(TAG, "onPayloadApplicationComplete success");
                     annoyUser();
@@ -305,7 +305,7 @@ public class Service extends IntentService {
             }
 
             Log.d(TAG, "download completed");
-            notificationHandler.cancelDownloadNotification();
+            notificationHandler.cancelProgressNotification();
             onDownloadFinished(streaming, targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
@@ -317,8 +317,7 @@ public class Service extends IntentService {
             if (connection != null) {
                 connection.disconnect();
             }
-            notificationHandler.cancelDownloadNotification();
-            notificationHandler.cancelInstallNotification();
+            notificationHandler.cancelProgressNotification();
             TriggerUpdateReceiver.completeWakefulIntent(intent);
         }
     }
