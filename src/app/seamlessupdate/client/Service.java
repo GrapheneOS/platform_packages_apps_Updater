@@ -248,7 +248,7 @@ public class Service extends IntentService {
                 throw new GeneralSecurityException("targetChannel: " + targetChannel + " does not match channel: " + channel);
             }
 
-            notificationHandler.showDownloadNotification(0, 100);
+            notificationHandler.showInitialDownloadNotification();
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded = UPDATE_PATH.length();
