@@ -65,6 +65,8 @@ public class Service extends IntentService {
     }
 
     private void applyUpdate(final boolean streaming, final long payloadOffset, final String[] headerKeyValuePairs) {
+        notificationHandler.showInstallNotification(0, 100);
+
         final CountDownLatch monitor = new CountDownLatch(1);
         final UpdateEngine engine = new UpdateEngine();
         engine.bind(new UpdateEngineCallback() {
@@ -245,6 +247,8 @@ public class Service extends IntentService {
             if (!targetChannel.equals(channel)) {
                 throw new GeneralSecurityException("targetChannel: " + targetChannel + " does not match channel: " + channel);
             }
+
+            notificationHandler.showDownloadNotification(0, 100);
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded = UPDATE_PATH.length();
