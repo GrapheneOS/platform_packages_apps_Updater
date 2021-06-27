@@ -30,10 +30,9 @@ public class NotificationHandler {
     }
 
     void showDownloadNotification(int progress, int max) {
-        String title = context.getString(R.string.notification_download_title);
         Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
                 .setContentIntent(getPendingSettingsIntent())
-                .setContentTitle(title)
+                .setContentTitle(context.getString(R.string.notification_download_title))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp);
@@ -43,10 +42,9 @@ public class NotificationHandler {
     }
 
     void showVerifyNotification(int progress, int max) {
-        String title = context.getString(R.string.notification_verify_title);
         Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
                 .setContentIntent(getPendingSettingsIntent())
-                .setContentTitle(title)
+                .setContentTitle(context.getString(R.string.notification_verify_title))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(max, progress, false)
@@ -55,10 +53,9 @@ public class NotificationHandler {
     }
 
     void showInstallNotification(int progress, int max) {
-        String title = context.getString(R.string.notification_install_title);
         Notification.Builder builder = new Notification.Builder(context, NOTIFICATION_CHANNEL_ID_PROGRESS)
                 .setContentIntent(getPendingSettingsIntent())
-                .setContentTitle(title)
+                .setContentTitle(context.getString(R.string.notification_install_title))
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setProgress(max, progress, false)
