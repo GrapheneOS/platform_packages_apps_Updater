@@ -35,6 +35,7 @@ public class NotificationHandler {
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(title)
                 .setOngoing(true)
+                .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp);
         if (max <= 0) builder.setProgress(0, 0, true);
         else builder.setProgress(max, progress, false);
@@ -47,6 +48,7 @@ public class NotificationHandler {
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(title)
                 .setOngoing(true)
+                .setOnlyAlertOnce(true)
                 .setProgress(max, progress, false)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp);
         notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
@@ -58,6 +60,7 @@ public class NotificationHandler {
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(title)
                 .setOngoing(true)
+                .setOnlyAlertOnce(true)
                 .setProgress(max, progress, false)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp);
         notificationManager.notify(NOTIFICATION_ID_PROGRESS, builder.build());
