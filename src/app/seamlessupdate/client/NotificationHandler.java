@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 
 import static android.app.NotificationManager.IMPORTANCE_LOW;
 
@@ -73,9 +74,15 @@ public class NotificationHandler {
                 service.getString(R.string.notification_channel), NotificationManager.IMPORTANCE_HIGH);
         channel.enableLights(true);
         channel.enableVibration(true);
+
+        Notification.Action rebootAction = new Notification.Action.Builder(
+                Icon.createWithResource(service.getApplication(), R.drawable.ic_restart),
+                service.getString(R.string.notification_reboot_action),
+                reboot).build();
+
         notificationManager.createNotificationChannel(channel);
         notificationManager.notify(NOTIFICATION_ID_REBOOT, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID)
-                .addAction(R.drawable.ic_restart, service.getString(R.string.notification_reboot_action), reboot)
+                .addAction(rebootAction)
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(R.string.notification_title))
                 .setContentText(service.getString(R.string.notification_text))
