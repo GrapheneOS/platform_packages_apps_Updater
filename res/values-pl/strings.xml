@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Klient ciągłych aktualizacji</string>
+    <string name="notification_channel">Potrzebne ponowne uruchomienie</string>
+    <string name="notification_channel_progress">Postęp aktualizacji</string>
+    <string name="notification_download_title">Pobieranie aktualizacji systemu</string>
+    <string name="notification_install_title">Instalacja aktualizacji systemu</string>
+    <string name="notification_title">Pomyślnie zainstalowano aktualizację</string>
+    <string name="notification_text">Uruchom ponownie urządzenie, aby korzystać z najnowszego wydania systemu.</string>
+    <string name="notification_reboot_action">Uruchom ponownie</string>
+    <string name="settings_title">Aktualizacja systemu</string>
+    <string name="channel_title">Kanał wydania</string>
+    <string name="channel_stable">Stabilny</string>
+    <string name="channel_beta">Beta</string>
+    <string name="network_type_title">Dozwolone sieci</string>
+    <string name="network_type_any">Dowolna</string>
+    <string name="network_type_not_roaming">Za wyjątkiem roamingu</string>
+    <string name="network_type_unmetered">Niemierzone</string>
+    <string name="battery_not_low_title">Wymagaj baterii powyżej poziomu ostrzegawaczego</string>
+    <string name="battery_not_low_summary_on">Pobieraj/instaluj aktualizacje, tylko gdy stan naładowania baterii jest powyżej poziomu ostrzegawczego</string>
+    <string name="battery_not_low_summary_off">Pobieraj/instaluj aktualizacje nawet gdy stan naładowania baterii jest poniżej poziomu ostrzegawczego</string>
+    <string name="idle_reboot_title">Automatyczny restart</string>
+    <string name="idle_reboot_summary_on">Automatycznie restartuj, gdy tylko urządzenie będzie nieaktywne po pomyślnej instalacji aktualizacji</string>
+    <string name="idle_reboot_summary_off">Nie restartuj automatycznie nieaktywnego urządzenia po pomyślnej instalacji aktualizacji</string>
+    <string name="check_for_updates_title">Sprawdź aktualizacje</string>
+    <string name="check_for_updates_summary">Naciśnij, aby sprawdzić aktualizacje gdy tylko będzie to możliwe</string>
+</resources>
