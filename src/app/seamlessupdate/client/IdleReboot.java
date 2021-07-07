@@ -23,11 +23,14 @@ public class IdleReboot extends JobService {
             .build());
         if (result == JobScheduler.RESULT_FAILURE) {
             Log.d(TAG, "Job schedule failed");
+        } else {
+            Log.d(TAG, "Scheduled.");
         }
     }
 
     static void cancel(final Context context) {
         context.getSystemService(JobScheduler.class).cancel(JOB_ID_IDLE_REBOOT);
+        Log.d(TAG, "Canceled.");
     }
 
     @Override

@@ -33,7 +33,8 @@ public class PeriodicJob extends JobService {
                 jobInfo.isPersisted() &&
                 jobInfo.getIntervalMillis() == INTERVAL_MILLIS &&
                 Objects.equals(jobInfo.getExtras().getString(EXTRA_JOB_CHANNEL), channel)) {
-            Log.d(TAG, "Periodic job already registered");
+            Log.d(TAG, "Already scheduled. channel=" + channel + ", networkType=" + networkType
+                    + ", batteryNotLow=" + batteryNotLow);
             return;
         }
         final PersistableBundle extras = new PersistableBundle();
@@ -48,6 +49,9 @@ public class PeriodicJob extends JobService {
             .build());
         if (result == JobScheduler.RESULT_FAILURE) {
             Log.d(TAG, "Periodic job schedule failed");
+        } else {
+            Log.d(TAG, "Scheduled. channel=" + channel + ", networkType=" + networkType
+                    + ", batteryNotLow=" + batteryNotLow);
         }
     }
 
