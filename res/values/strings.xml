@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Seamless Update Client</string>
-    <string name="notification_channel">Reboot Prompt</string>
     <string name="notification_channel_progress">Update Progress</string>
+    <string name="notification_channel_reboot">Reboot Prompt</string>
     <string name="notification_download_title">Downloading system update</string>
     <string name="notification_verify_title">Verifying system update</string>
     <string name="notification_install_title">Installing system update</string>
-    <string name="notification_title">Update successfully installed</string>
-    <string name="notification_text">Please reboot the device to run the latest OS release.</string>
+    <string name="notification_reboot_title">Update successfully installed</string>
+    <string name="notification_reboot_text">Please reboot the device to run the latest OS release.</string>
     <string name="notification_reboot_action">Reboot</string>
     <string name="settings_title">System update</string>
     <string name="channel_title">Release channel</string>

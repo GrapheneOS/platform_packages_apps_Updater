@@ -8,13 +8,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static android.app.NotificationManager.IMPORTANCE_LOW;
+import static android.app.NotificationManager.IMPORTANCE_HIGH;
 
 public class NotificationHandler {
     private static final int NOTIFICATION_ID_PROGRESS = 1;
     private static final int NOTIFICATION_ID_REBOOT = 2;
-    private static final String NOTIFICATION_CHANNEL_ID = "updates2";
     private static final String NOTIFICATION_CHANNEL_ID_PROGRESS = "progress";
+    private static final String NOTIFICATION_CHANNEL_ID_REBOOT = "updates2";
     private static final int PENDING_REBOOT_ID = 1;
     private static final int PENDING_SETTINGS_ID = 2;
 
@@ -25,9 +29,18 @@ public class NotificationHandler {
         this.service = service;
         this.notificationManager = service.getSystemService(NotificationManager.class);
 
-        final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID_PROGRESS,
-                service.getString(R.string.notification_channel_progress), IMPORTANCE_LOW);
-        notificationManager.createNotificationChannel(channel);
+        final List<NotificationChannel> channels = new ArrayList<>();
+
+        channels.add(new NotificationChannel(NOTIFICATION_CHANNEL_ID_PROGRESS,
+                service.getString(R.string.notification_channel_progress), IMPORTANCE_LOW));
+
+        final NotificationChannel reboot = new NotificationChannel(NOTIFICATION_CHANNEL_ID_REBOOT,
+                service.getString(R.string.notification_channel_reboot), IMPORTANCE_HIGH);
+        reboot.enableLights(true);
+        reboot.enableVibration(true);
+        channels.add(reboot);
+
+        notificationManager.createNotificationChannels(channels);
     }
 
     Notification buildProgressNotification(int resId, int progress, int max) {
@@ -70,22 +83,16 @@ public class NotificationHandler {
         final PendingIntent reboot = PendingIntent.getBroadcast(service, PENDING_REBOOT_ID,
                         new Intent(service, RebootReceiver.class), PendingIntent.FLAG_IMMUTABLE);
 
-        final NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                service.getString(R.string.notification_channel), NotificationManager.IMPORTANCE_HIGH);
-        channel.enableLights(true);
-        channel.enableVibration(true);
-
         Notification.Action rebootAction = new Notification.Action.Builder(
                 Icon.createWithResource(service.getApplication(), R.drawable.ic_restart),
                 service.getString(R.string.notification_reboot_action),
                 reboot).build();
 
-        notificationManager.createNotificationChannel(channel);
-        notificationManager.notify(NOTIFICATION_ID_REBOOT, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID)
+        notificationManager.notify(NOTIFICATION_ID_REBOOT, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_REBOOT)
                 .addAction(rebootAction)
                 .setContentIntent(getPendingSettingsIntent())
-                .setContentTitle(service.getString(R.string.notification_title))
-                .setContentText(service.getString(R.string.notification_text))
+                .setContentTitle(service.getString(R.string.notification_reboot_title))
+                .setContentText(service.getString(R.string.notification_reboot_text))
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
