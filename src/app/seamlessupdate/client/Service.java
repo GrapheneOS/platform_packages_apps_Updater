@@ -116,6 +116,7 @@ public class Service extends IntentService {
 
     private void onDownloadFinished(final boolean streaming, final long targetBuildDate, final String channel) throws IOException, GeneralSecurityException {
         try {
+            notificationHandler.showVerifyNotification(0, 100);
             RecoverySystem.verifyPackage(UPDATE_PATH, (int progress) -> {
                 Log.d(TAG, "verifyPackage: " + progress + "%");
                 notificationHandler.showVerifyNotification(progress, 100);
