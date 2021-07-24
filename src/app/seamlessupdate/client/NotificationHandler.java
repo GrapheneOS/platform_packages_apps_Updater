@@ -11,19 +11,30 @@ import android.graphics.drawable.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.app.NotificationManager.IMPORTANCE_LOW;
 import static android.app.NotificationManager.IMPORTANCE_HIGH;
+import static android.app.NotificationManager.IMPORTANCE_LOW;
+import static android.app.NotificationManager.IMPORTANCE_MIN;
 
 public class NotificationHandler {
+    private static enum Phase {
+        CHECK, DOWNLOAD, VERIFY, INSTALL
+    }
+
     private static final int NOTIFICATION_ID_PROGRESS = 1;
     private static final int NOTIFICATION_ID_REBOOT = 2;
+    private static final int NOTIFICATION_ID_FAILURE = 3;
+    private static final int NOTIFICATION_ID_UPDATED = 4;
     private static final String NOTIFICATION_CHANNEL_ID_PROGRESS = "progress";
     private static final String NOTIFICATION_CHANNEL_ID_REBOOT = "updates2";
+    private static final String NOTIFICATION_CHANNEL_ID_FAILURE = "failure";
+    private static final String NOTIFICATION_CHANNEL_ID_UPDATED = "updated";
     private static final int PENDING_REBOOT_ID = 1;
     private static final int PENDING_SETTINGS_ID = 2;
 
     private final Service service;
     private final NotificationManager notificationManager;
+
+    private static Phase phase;
 
     NotificationHandler(Service service) {
         this.service = service;
@@ -40,6 +51,12 @@ public class NotificationHandler {
         reboot.enableVibration(true);
         channels.add(reboot);
 
+        channels.add(new NotificationChannel(NOTIFICATION_CHANNEL_ID_FAILURE,
+                service.getString(R.string.notification_channel_failure), IMPORTANCE_LOW));
+
+        channels.add(new NotificationChannel(NOTIFICATION_CHANNEL_ID_UPDATED,
+                service.getString(R.string.notification_channel_updated), IMPORTANCE_MIN));
+
         notificationManager.createNotificationChannels(channels);
     }
 
@@ -55,7 +72,31 @@ public class NotificationHandler {
         return builder.build();
     }
 
+    void start() {
+        phase = Phase.CHECK;
+        notificationManager.cancelAll();
+    }
+
+    void showUpdatedNotification(final String channel) {
+        final String channelText;
+        if ("stable".equals(channel)) {
+            channelText = service.getString(R.string.channel_stable);
+        } else if ("beta".equals(channel)) {
+            channelText = service.getString(R.string.channel_beta);
+        } else {
+            channelText = channel;
+        }
+
+        notificationManager.notify(NOTIFICATION_ID_UPDATED, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_UPDATED)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(service.getString(R.string.notification_updated_title))
+                .setContentText(service.getString(R.string.notification_updated_text, channelText))
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp)
+                .build());
+    }
+
     void showInitialDownloadNotification() {
+        phase = Phase.DOWNLOAD;
         service.startForeground(NOTIFICATION_ID_PROGRESS,
                 buildProgressNotification(R.string.notification_download_title, 0, 100));
     }
@@ -66,11 +107,13 @@ public class NotificationHandler {
     }
 
     void showVerifyNotification(int progress, int max) {
+        phase = Phase.VERIFY;
         notificationManager.notify(NOTIFICATION_ID_PROGRESS,
                 buildProgressNotification(R.string.notification_verify_title, progress, max));
     }
 
     void showInstallNotification(int progress, int max) {
+        phase = Phase.INSTALL;
         notificationManager.notify(NOTIFICATION_ID_PROGRESS,
                 buildProgressNotification(R.string.notification_install_title, progress, max));
     }
@@ -94,6 +137,39 @@ public class NotificationHandler {
                 .setContentTitle(service.getString(R.string.notification_reboot_title))
                 .setContentText(service.getString(R.string.notification_reboot_text))
                 .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp)
+                .build());
+    }
+
+    void showFailureNotification() {
+        final int titleResId;
+        final int contentResId;
+
+        switch (phase) {
+            case CHECK:
+                titleResId = R.string.notification_failed_check_title;
+                contentResId = R.string.notification_failed_check_text;
+                break;
+
+            case DOWNLOAD:
+                titleResId = R.string.notification_failed_download_title;
+                contentResId = R.string.notification_failed_download_text;
+                break;
+
+            case VERIFY:
+                titleResId = R.string.notification_failed_verify_title;
+                contentResId = R.string.notification_failed_verify_text;
+                break;
+
+            default:
+                titleResId = R.string.notification_failed_install_title;
+                contentResId = R.string.notification_failed_install_text;
+        }
+
+        notificationManager.notify(NOTIFICATION_ID_FAILURE, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_FAILURE)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(service.getString(titleResId))
+                .setContentText(service.getString(contentResId))
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
     }

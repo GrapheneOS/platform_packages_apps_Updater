@@ -226,6 +226,7 @@ public class Service extends IntentService {
                 return;
             }
             mUpdating = true;
+            notificationHandler.start();
 
             final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(this));
 
@@ -240,6 +241,7 @@ public class Service extends IntentService {
             final long targetBuildDate = Long.parseLong(metadata[1]);
             final long sourceBuildDate = SystemProperties.getLong("ro.build.date.utc", 0);
             if (targetBuildDate <= sourceBuildDate) {
+                notificationHandler.showUpdatedNotification(channel);
                 Log.d(TAG, "targetBuildDate: " + targetBuildDate + " not higher than sourceBuildDate: " + sourceBuildDate);
                 mUpdating = false;
                 return;
@@ -314,6 +316,7 @@ public class Service extends IntentService {
             onDownloadFinished(streaming, targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
+            notificationHandler.showFailureNotification();
             mUpdating = false;
             PeriodicJob.scheduleRetry(this);
         } finally {
