@@ -43,7 +43,7 @@ public class NotificationHandler {
         notificationManager.createNotificationChannels(channels);
     }
 
-    Notification buildProgressNotification(int resId, int progress, int max) {
+    private Notification buildProgressNotification(int resId, int progress, int max) {
         Notification.Builder builder = new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_PROGRESS)
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(resId))
