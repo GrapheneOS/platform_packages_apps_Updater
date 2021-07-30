@@ -91,6 +91,7 @@ public class NotificationHandler {
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(R.string.notification_updated_title))
                 .setContentText(service.getString(R.string.notification_updated_text, channelText))
+                .setShowWhen(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
     }
@@ -137,6 +138,7 @@ public class NotificationHandler {
                 .setContentTitle(service.getString(R.string.notification_reboot_title))
                 .setContentText(service.getString(R.string.notification_reboot_text))
                 .setOngoing(true)
+                .setShowWhen(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
     }
@@ -170,6 +172,7 @@ public class NotificationHandler {
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(titleResId))
                 .setContentText(service.getString(contentResId))
+                .setShowWhen(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
     }
