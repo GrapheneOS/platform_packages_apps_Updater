@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OS Update Client</string>
+    <string name="app_name">System Updater</string>
     <string name="notification_channel_progress">Update Progress</string>
     <string name="notification_channel_reboot">Reboot Prompt</string>
     <string name="notification_channel_failure">Error Reporting</string>
