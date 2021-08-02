@@ -12,7 +12,7 @@
     <string name="notification_reboot_text">Please reboot the device to run the latest OS release.</string>
     <string name="notification_reboot_action">Reboot</string>
     <string name="notification_updated_title">Fully updated</string>
-    <string name="notification_updated_text">Latest %s channel release already installed.</string>
+    <string name="notification_updated_text">Confirmed latest %s channel release is already installed.</string>
     <string name="notification_failed_check_title">Failed to check for updates</string>
     <string name="notification_failed_check_text">An error occured checking for the latest update. The update system will try again soon.</string>
     <string name="notification_failed_download_title">Failed to download update</string>
