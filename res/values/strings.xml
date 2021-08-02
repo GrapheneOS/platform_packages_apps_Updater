@@ -37,4 +37,6 @@
     <string name="idle_reboot_summary_off">Don\'t automatically reboot once the device is idle after successfully installing an update</string>
     <string name="check_for_updates_title">Check for updates</string>
     <string name="check_for_updates_summary">Tap to check for updates as soon as possible</string>
+    <string name="notification_settings_title">Notification settings</string>
+    <string name="notification_settings_summary">Modify notification channel settings</string>
 </resources>
