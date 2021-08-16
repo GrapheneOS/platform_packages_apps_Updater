@@ -172,6 +172,8 @@ public class NotificationHandler {
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(titleResId))
                 .setContentText(service.getString(contentResId))
+                .setStyle(new Notification.BigTextStyle()
+                    .bigText(service.getString(contentResId)))
                 .setShowWhen(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
