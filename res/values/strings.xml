@@ -22,6 +22,7 @@
     <string name="notification_failed_install_title">Failed to install update</string>
     <string name="notification_failed_install_text">The latest update passed verification but installation failed. The update system will try again soon. The download passed verification and will be reused if it\'s still the latest version.</string>
     <string name="settings_title">System update</string>
+    <string name="settings_header">Settings</string>
     <string name="channel_title">Release channel</string>
     <string name="channel_stable">Stable</string>
     <string name="channel_beta">Beta</string>
