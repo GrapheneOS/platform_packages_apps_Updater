@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
+import android.text.Html;
+import android.text.Spanned;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,7 +145,7 @@ public class NotificationHandler {
                 .build());
     }
 
-    void showFailureNotification() {
+    void showFailureNotification(String exceptionMessage) {
         final int titleResId;
         final int contentResId;
 
@@ -168,12 +170,15 @@ public class NotificationHandler {
                 contentResId = R.string.notification_failed_install_text;
         }
 
+        String text = service.getString(contentResId) + "<br><br><tt>" + exceptionMessage + "</tt>";
+        Spanned styledText = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
+
         notificationManager.notify(NOTIFICATION_ID_FAILURE, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_FAILURE)
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(titleResId))
-                .setContentText(service.getString(contentResId))
+                .setContentText(styledText)
                 .setStyle(new Notification.BigTextStyle()
-                    .bigText(service.getString(contentResId)))
+                    .bigText(styledText))
                 .setShowWhen(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp)
                 .build());
