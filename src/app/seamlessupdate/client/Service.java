@@ -316,7 +316,7 @@ public class Service extends IntentService {
             onDownloadFinished(streaming, targetBuildDate, channel);
         } catch (GeneralSecurityException | IOException e) {
             Log.e(TAG, "failed to download and install update", e);
-            notificationHandler.showFailureNotification();
+            notificationHandler.showFailureNotification(e.getMessage());
             mUpdating = false;
             PeriodicJob.scheduleRetry(this);
         } finally {
