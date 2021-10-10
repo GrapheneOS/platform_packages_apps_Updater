@@ -251,7 +251,7 @@ public class Service extends IntentService {
                 throw new GeneralSecurityException("targetChannel: " + targetChannel + " does not match channel: " + channel);
             }
 
-            notificationHandler.showInitialDownloadNotification();
+            notificationHandler.showDownloadNotification(0, 100);
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded = UPDATE_PATH.length();
@@ -326,7 +326,6 @@ public class Service extends IntentService {
                 connection.disconnect();
             }
             notificationHandler.cancelProgressNotification();
-            TriggerUpdateReceiver.completeWakefulIntent(intent);
         }
     }
 }

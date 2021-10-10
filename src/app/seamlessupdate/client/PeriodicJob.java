@@ -77,7 +77,7 @@ public class PeriodicJob extends JobService {
     @Override
     public boolean onStartJob(final JobParameters params) {
         Log.d(TAG, "onStartJob id: " + params.getJobId());
-        sendBroadcast(new Intent(this, TriggerUpdateReceiver.class));
+        startForegroundService(new Intent(this, Service.class));
         return false;
     }
 

@@ -66,6 +66,7 @@ public class NotificationHandler {
         Notification.Builder builder = new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_PROGRESS)
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(resId))
+                .setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.ic_system_update_white_24dp);
@@ -77,6 +78,13 @@ public class NotificationHandler {
     void start() {
         phase = Phase.CHECK;
         notificationManager.cancelAll();
+        service.startForeground(NOTIFICATION_ID_PROGRESS, new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_PROGRESS)
+                .setContentIntent(getPendingSettingsIntent())
+                .setContentTitle(service.getString(R.string.notification_check_title))
+                .setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_DEFERRED)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setSmallIcon(R.drawable.ic_system_update_white_24dp).build());
     }
 
     void showUpdatedNotification(final String channel) {
@@ -98,13 +106,8 @@ public class NotificationHandler {
                 .build());
     }
 
-    void showInitialDownloadNotification() {
-        phase = Phase.DOWNLOAD;
-        service.startForeground(NOTIFICATION_ID_PROGRESS,
-                buildProgressNotification(R.string.notification_download_title, 0, 100));
-    }
-
     void showDownloadNotification(int progress, int max) {
+        phase = Phase.DOWNLOAD;
         notificationManager.notify(NOTIFICATION_ID_PROGRESS,
                 buildProgressNotification(R.string.notification_download_title, progress, max));
     }
