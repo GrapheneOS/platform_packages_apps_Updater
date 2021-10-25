@@ -112,10 +112,10 @@ public class NotificationHandler {
                 buildProgressNotification(R.string.notification_download_title, progress, max));
     }
 
-    void showVerifyNotification(int progress, int max) {
+    void showVerifyNotification(int progress) {
         phase = Phase.VERIFY;
         notificationManager.notify(NOTIFICATION_ID_PROGRESS,
-                buildProgressNotification(R.string.notification_verify_title, progress, max));
+                buildProgressNotification(R.string.notification_verify_title, progress, 100));
     }
 
     void showInstallNotification(int progress, int max) {
