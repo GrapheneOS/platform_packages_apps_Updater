@@ -3,8 +3,6 @@ package app.seamlessupdate.client;
 import static android.os.Build.DEVICE;
 import static android.os.Build.FINGERPRINT;
 import static android.os.Build.VERSION.INCREMENTAL;
-import static android.os.UpdateEngine.UpdateStatusConstants.DOWNLOADING;
-import static android.os.UpdateEngine.UpdateStatusConstants.FINALIZING;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -16,6 +14,7 @@ import android.os.RecoverySystem;
 import android.os.SystemProperties;
 import android.os.UpdateEngine;
 import android.os.UpdateEngine.ErrorCodeConstants;
+import android.os.UpdateEngine.UpdateStatusConstants;
 import android.os.UpdateEngineCallback;
 import android.util.Log;
 
@@ -65,7 +64,7 @@ public class Service extends IntentService {
     }
 
     private void applyUpdate(final boolean streaming, final long payloadOffset, final String[] headerKeyValuePairs) {
-        notificationHandler.showInstallNotification(0, 100);
+        notificationHandler.showInstallNotification(0);
 
         final CountDownLatch monitor = new CountDownLatch(1);
         final UpdateEngine engine = new UpdateEngine();
@@ -73,10 +72,12 @@ public class Service extends IntentService {
             @Override
             public void onStatusUpdate(int status, float percent) {
                 Log.d(TAG, "onStatusUpdate: " + status + ", " + percent * 100 + "%");
-                if (status == DOWNLOADING) {
-                    notificationHandler.showInstallNotification(Math.round(percent * 100), 200);
-                } else if (status == FINALIZING) {
-                    notificationHandler.showInstallNotification(Math.round(percent * 100) + 100, 200);
+                if (status == UpdateStatusConstants.DOWNLOADING) {
+                    notificationHandler.showInstallNotification(Math.round(percent * 100));
+                } else if (status == UpdateStatusConstants.VERIFYING) {
+                    notificationHandler.showValidateNotification(Math.round(percent * 100));
+                } else if (status == UpdateStatusConstants.FINALIZING) {
+                    notificationHandler.showFinalizeNotification(Math.round(percent * 100));
                 }
             }
 

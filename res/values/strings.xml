@@ -9,6 +9,8 @@
     <string name="notification_download_title">Downloading system update</string>
     <string name="notification_verify_title">Verifying system update</string>
     <string name="notification_install_title">Installing system update</string>
+    <string name="notification_validate_title">Validating system update</string>
+    <string name="notification_finalize_title">Finalizing system update</string>
     <string name="notification_reboot_title">Update successfully installed</string>
     <string name="notification_reboot_text">Please reboot the device to run the latest OS release.</string>
     <string name="notification_reboot_action">Reboot</string>

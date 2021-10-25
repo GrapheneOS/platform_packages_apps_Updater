@@ -118,10 +118,20 @@ public class NotificationHandler {
                 buildProgressNotification(R.string.notification_verify_title, progress, 100));
     }
 
-    void showInstallNotification(int progress, int max) {
+    void showInstallNotification(int progress) {
         phase = Phase.INSTALL;
         notificationManager.notify(NOTIFICATION_ID_PROGRESS,
-                buildProgressNotification(R.string.notification_install_title, progress, max));
+                buildProgressNotification(R.string.notification_install_title, progress, 100));
+    }
+
+    void showValidateNotification(int progress) {
+        notificationManager.notify(NOTIFICATION_ID_PROGRESS,
+                buildProgressNotification(R.string.notification_validate_title, progress, 100));
+    }
+
+    void showFinalizeNotification(int progress) {
+        notificationManager.notify(NOTIFICATION_ID_PROGRESS,
+                buildProgressNotification(R.string.notification_finalize_title, progress, 100));
     }
 
     void cancelProgressNotification() {
