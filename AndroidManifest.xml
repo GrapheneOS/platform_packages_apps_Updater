@@ -51,7 +51,6 @@
                 android:launchMode="singleTop"
                 android:label="@string/settings_title"
                 android:excludeFromRecents="true"
-                android:directBootAware="true"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
