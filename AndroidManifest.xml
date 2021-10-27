@@ -39,10 +39,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".TriggerUpdateReceiver"
-                android:directBootAware="true"
-                android:exported="false" />
-
         <receiver android:name=".RebootReceiver"
                 android:directBootAware="true"
                 android:exported="false" />
