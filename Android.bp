@@ -3,7 +3,6 @@ android_app {
     srcs: ["src/**/*.java"],
     resource_dirs: ["res"],
     static_libs: [
-        "androidx.legacy_legacy-support-v4",
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",
         "androidx.preference_preference",
