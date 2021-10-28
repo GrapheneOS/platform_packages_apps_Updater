@@ -10,15 +10,17 @@
         <item name="colorSecondaryVariant">@*android:color/accent_device_default_dark</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <!-- Window background color. -->
-        <item name="android:windowBackground">@color/black</item>
+        <item name="android:windowBackground">@*android:color/primary_device_default_settings</item>
+        <!-- Navigation bar. -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <!-- Action bar theme. -->
         <item name="actionBarTheme">@style/ActionBar</item>
     </style>
 
     <!-- Action bar style. -->
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="android:background">@color/black</item>
+        <item name="android:background">@*android:color/primary_device_default_settings</item>
     </style>
 </resources>

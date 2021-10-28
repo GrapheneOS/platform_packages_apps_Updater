@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@*android:color/accent_device_default_light</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/grey_300</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <!-- Status bar elements color. -->
         <item name="android:windowLightStatusBar">true</item>
         <!-- Action bar theme. -->
@@ -18,7 +18,7 @@
         <!-- Navigation bar. -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:navigationBarDividerColor">@*android:color/navigation_bar_divider_device_default_settings</item>
         <!-- Window background color. -->
         <item name="android:windowBackground">@*android:color/background_device_default_light</item>
@@ -26,6 +26,6 @@
 
     <!-- Action bar style. -->
     <style name="ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="colorPrimary">@color/grey_100</item>
+        <item name="colorPrimary">@android:color/transparent</item>
     </style>
 </resources>

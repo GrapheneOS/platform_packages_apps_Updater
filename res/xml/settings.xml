@@ -4,7 +4,9 @@
             app:title="@string/check_for_updates_title"
             app:summary="@string/check_for_updates_summary" />
 
-    <PreferenceCategory app:title="@string/settings_header">
+    <PreferenceCategory app:title="@string/settings_header"
+            app:allowDividerAbove="false"
+            app:allowDividerBelow="false">
 
         <ListPreference app:key="channel"
                 app:title="@string/channel_title"
