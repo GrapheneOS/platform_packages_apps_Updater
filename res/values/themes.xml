@@ -4,11 +4,11 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@*android:color/accent_device_default_light</item>
         <item name="colorPrimaryVariant">@*android:color/accent_device_default_light</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@android:color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@*android:color/accent_device_default_light</item>
         <item name="colorSecondaryVariant">@*android:color/accent_device_default_light</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@android:color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <!-- Status bar elements color. -->
