@@ -34,8 +34,8 @@
     <string name="network_type_not_roaming">Not roaming</string>
     <string name="network_type_unmetered">Unmetered</string>
     <string name="battery_not_low_title">Require battery above warning level</string>
-    <string name="battery_not_low_summary_on">Only download / install updates when the battery is above the warning level</string>
-    <string name="battery_not_low_summary_off">Download / install updates even when the battery is below the warning level</string>
+    <string name="battery_not_low_summary_on">Only download/install updates when the battery is above the warning level</string>
+    <string name="battery_not_low_summary_off">Download/install updates even when the battery is below the warning level</string>
     <string name="idle_reboot_title">Automatic reboot</string>
     <string name="idle_reboot_summary_on">Automatically reboot once the device is idle after successfully installing an update</string>
     <string name="idle_reboot_summary_off">Don\'t automatically reboot once the device is idle after successfully installing an update</string>
