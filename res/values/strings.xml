@@ -29,6 +29,7 @@
     <string name="channel_title">Release channel</string>
     <string name="channel_stable">Stable</string>
     <string name="channel_beta">Beta</string>
+    <string name="channel_alpha">Alpha</string>
     <string name="network_type_title">Permitted networks</string>
     <string name="network_type_any">Any</string>
     <string name="network_type_not_roaming">Not roaming</string>

@@ -3,11 +3,13 @@
     <string-array name="channel_entries" translatable="false">
         <item>@string/channel_stable</item>
         <item>@string/channel_beta</item>
+        <item>@string/channel_alpha</item>
     </string-array>
 
     <string-array name="channel_values" translatable="false">
         <item>stable</item>
         <item>beta</item>
+        <item>alpha</item>
     </string-array>
 
     <string-array name="network_type_entries" translatable="false">

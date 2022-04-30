@@ -93,6 +93,8 @@ public class NotificationHandler {
             channelText = service.getString(R.string.channel_stable);
         } else if ("beta".equals(channel)) {
             channelText = service.getString(R.string.channel_beta);
+        } else if ("alpha".equals(channel)) {
+            channelText = service.getString(R.string.channel_alpha);
         } else {
             channelText = channel;
         }
