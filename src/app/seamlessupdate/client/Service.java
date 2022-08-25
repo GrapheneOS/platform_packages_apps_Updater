@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RecoverySystem;
+import android.os.ServiceSpecificException;
 import android.os.SystemProperties;
 import android.os.UpdateEngine;
 import android.os.UpdateEngine.ErrorCodeConstants;
@@ -315,7 +316,7 @@ public class Service extends IntentService {
 
             Log.d(TAG, "download completed");
             onDownloadFinished(streaming, targetBuildDate, channel);
-        } catch (GeneralSecurityException | IOException e) {
+        } catch (GeneralSecurityException | IOException | ServiceSpecificException e) {
             Log.e(TAG, "failed to download and install update", e);
             notificationHandler.showFailureNotification(e.getMessage());
             mUpdating = false;
