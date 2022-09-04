@@ -8,14 +8,14 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.Preference;
 import androidx.preference.ListPreference;
 
-public class Settings extends AppCompatActivity {
+import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
+
+public class Settings extends CollapsingToolbarBaseActivity {
     private static final String KEY_CHANNEL = "channel";
     private static final String KEY_NETWORK_TYPE = "network_type";
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
@@ -55,16 +55,12 @@ public class Settings extends AppCompatActivity {
         if (!userManager.isSystemUser()) {
             throw new SecurityException("system user only");
         }
-        setContentView(R.layout.activity_settings);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.settings, new SettingsFragment())
+                    .replace(com.android.settingslib.R.id.content_frame, new SettingsFragment())
                     .commit();
-        }
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 

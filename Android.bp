@@ -6,6 +6,7 @@ android_app {
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",
         "androidx.preference_preference",
+        "SettingsLib",
     ],
     platform_apis: true,
     privileged: true,
