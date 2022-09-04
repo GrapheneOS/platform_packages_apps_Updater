@@ -20,7 +20,7 @@ public class Settings extends CollapsingToolbarBaseActivity {
     private static final String KEY_NETWORK_TYPE = "network_type";
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
-    private static final String KEY_CHECK_FOR_UDPATES = "check_for_updates";
+    private static final String KEY_CHECK_FOR_UPDATES = "check_for_updates";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
 
     static SharedPreferences getPreferences(final Context context) {
@@ -87,7 +87,7 @@ public class Settings extends CollapsingToolbarBaseActivity {
                 }
                 return true;
             };
-            final Preference checkForUpdates = findPreference(KEY_CHECK_FOR_UDPATES);
+            final Preference checkForUpdates = findPreference(KEY_CHECK_FOR_UPDATES);
             if (checkForUpdates != null) {
                 checkForUpdates.setOnPreferenceClickListener(clickListener);
             }
