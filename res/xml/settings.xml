@@ -23,13 +23,13 @@
                 app:entryValues="@array/network_type_values"
                 app:defaultValue="@string/network_type_default" />
 
-        <SwitchPreferenceCompat app:key="battery_not_low"
+        <SwitchPreference app:key="battery_not_low"
                 app:title="@string/battery_not_low_title"
                 app:summaryOn="@string/battery_not_low_summary_on"
                 app:summaryOff="@string/battery_not_low_summary_off"
                 app:defaultValue="@string/battery_not_low_default" />
 
-        <SwitchPreferenceCompat app:key="idle_reboot"
+        <SwitchPreference app:key="idle_reboot"
                 app:title="@string/idle_reboot_title"
                 app:summaryOn="@string/idle_reboot_summary_on"
                 app:summaryOff="@string/idle_reboot_summary_off"
