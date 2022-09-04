@@ -2,14 +2,17 @@
 
     <Preference app:key="check_for_updates"
             app:title="@string/check_for_updates_title"
-            app:summary="@string/check_for_updates_summary" />
+            app:summary="@string/check_for_updates_summary"
+            app:iconSpaceReserved="false" />
 
     <PreferenceCategory app:title="@string/settings_header"
             app:allowDividerAbove="false"
-            app:allowDividerBelow="false">
+            app:allowDividerBelow="false"
+            app:iconSpaceReserved="false">
 
         <ListPreference app:key="channel"
                 app:title="@string/channel_title"
+                app:iconSpaceReserved="false"
                 app:useSimpleSummaryProvider="true"
                 app:entries="@array/channel_entries"
                 app:entryValues="@array/channel_values"
@@ -18,6 +21,7 @@
         <ListPreference app:key="network_type"
                 app:persistent="false"
                 app:title="@string/network_type_title"
+                app:iconSpaceReserved="false"
                 app:useSimpleSummaryProvider="true"
                 app:entries="@array/network_type_entries"
                 app:entryValues="@array/network_type_values"
@@ -25,18 +29,21 @@
 
         <SwitchPreference app:key="battery_not_low"
                 app:title="@string/battery_not_low_title"
+                app:iconSpaceReserved="false"
                 app:summaryOn="@string/battery_not_low_summary_on"
                 app:summaryOff="@string/battery_not_low_summary_off"
                 app:defaultValue="@string/battery_not_low_default" />
 
         <SwitchPreference app:key="idle_reboot"
                 app:title="@string/idle_reboot_title"
+                app:iconSpaceReserved="false"
                 app:summaryOn="@string/idle_reboot_summary_on"
                 app:summaryOff="@string/idle_reboot_summary_off"
                 app:defaultValue="@string/idle_reboot_default" />
 
         <Preference app:key="notification_settings"
                 app:title="@string/notification_settings_title"
+                app:iconSpaceReserved="false"
                 app:summary="@string/notification_settings_summary">
             <intent android:action="android.settings.APP_NOTIFICATION_SETTINGS">
                 <extra android:name="android.provider.extra.APP_PACKAGE" android:value="app.seamlessupdate.client" />
