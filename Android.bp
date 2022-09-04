@@ -4,8 +4,8 @@ android_app {
     resource_dirs: ["res"],
     static_libs: [
         "androidx.appcompat_appcompat",
-        "com.google.android.material_material",
         "androidx.preference_preference",
+        "SettingsLib",
     ],
     platform_apis: true,
     privileged: true,
