@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">System Updater</string>
+    <string name="app_name">Systemaktualisierung</string>
     <string name="notification_channel_progress">Aktualisierungsfortschritt</string>
     <string name="notification_channel_reboot">Neustart-Aufforderung</string>
     <string name="notification_channel_failure">Fehlermeldung</string>
