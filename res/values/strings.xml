@@ -20,10 +20,10 @@
     <string name="notification_failed_check_text">Bei der Suche nach dem neuesten Update ist ein Fehler aufgetreten. Das Aktualisierungssystem wird es bald wieder versuchen.</string>
     <string name="notification_failed_download_title">Systemaktualisierung kann nicht heruntergeladen werden</string>
     <string name="notification_failed_download_text">Beim Herunterladen des letzten Systemaktualisierung ist ein Fehler aufgetreten. Das Aktualisierungssystem wird es bald wieder versuchen. Die Aktualisierung wird fortgesetzt, wenn es sich noch um die neueste Stand handelt.</string>
-    <string name="notification_failed_verify_title">Failed to verify update</string>
-    <string name="notification_failed_verify_text">The latest update downloaded from the server failed to pass verification. Das Aktualisierungssystem wird es bald wieder versuchen. Die Aktualisierung wird erneut durchgeführt.</string>
-    <string name="notification_failed_install_title">Failed to install update</string>
-    <string name="notification_failed_install_text">The latest update passed verification but installation failed. Das Aktualisierungssystem wird es bald wieder versuchen. Die Aktualisierung hat die Überprüfung bestanden und wird wiederverwendet, wenn es sich noch um die neueste Stand handelt.</string>
+    <string name="notification_failed_verify_title">Systemaktualisierung konnte nicht verifiziert werden</string>
+    <string name="notification_failed_verify_text">Das letzte vom Server heruntergeladene Systemaktualisierung hat die Überprüfung nicht bestanden. Das Aktualisierungssystem wird es bald wieder versuchen. Die Aktualisierung wird erneut durchgeführt.</string>
+    <string name="notification_failed_install_title">Systemaktualisierung konnte nicht installiert werden</string>
+    <string name="notification_failed_install_text">Das letzte Systemaktualisierung hat die Überprüfung bestanden, aber die Installation ist fehlgeschlagen. Das Aktualisierungssystem wird es bald wieder versuchen. Die Aktualisierung hat die Überprüfung bestanden und wird wiederverwendet, wenn es sich noch um die neueste Stand handelt.</string>
     <string name="settings_title">Systemaktualisierung</string>
     <string name="settings_header">Einstellungen</string>
     <string name="channel_title">Freigabekanal</string>
