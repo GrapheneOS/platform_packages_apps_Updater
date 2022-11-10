@@ -35,11 +35,11 @@
     <string name="network_type_not_roaming">Nicht Roaming</string>
     <string name="network_type_unmetered">Unmetered</string>
     <string name="battery_not_low_title">Batterie oberhalb des Warnpegels erforderlich</string>
-    <string name="battery_not_low_summary_on">Nur Herunterladen / updates zu installieren, wenn der Akku über der Warngrenze liegt</string>
-    <string name="battery_not_low_summary_off">Herunterladen / Updates zu installieren, wenn der Akku unter der Warngrenze liegt</string>
+    <string name="battery_not_low_summary_on">Installieren oder laden Systemaktualisierung nur dann herunter, wenn der Akku über der Warngrenze liegt</string>
+    <string name="battery_not_low_summary_off">Installieren oder laden Systemaktualisierung herunter, auch wenn der Akku unter der Warngrenze liegt</string>
     <string name="idle_reboot_title">Automatisches Neustarten</string>
-    <string name="idle_reboot_summary_on">Das Gerät wird automatisch neu gestartet, wenn es sich im Leerlauf befindet, nachdem ein Update erfolgreich installiert wurde.</string>
-    <string name="idle_reboot_summary_off">Das Gerät wird nicht automatisch neu gestartet, wenn es sich im Leerlauf befindet, nachdem ein Update erfolgreich installiert wurde.</string>
+    <string name="idle_reboot_summary_on">Das Gerät wird automatisch neu gestartet, wenn es sich im Leerlauf befindet, nachdem ein Systemaktualisierung erfolgreich installiert wurde.</string>
+    <string name="idle_reboot_summary_off">Das Gerät wird nicht automatisch neu gestartet, wenn es sich im Leerlauf befindet, nachdem ein Systemaktualisierung erfolgreich installiert wurde.</string>
     <string name="check_for_updates_title">Nach Systemaktualisierung suchen</string>
     <string name="check_for_updates_summary">Tippen Sie auf, um so schnell wie möglich nach Systemaktualisierung zu suchen.</string>
     <string name="notification_settings_title">Einstellungen für Benachrichtigungen</string>
