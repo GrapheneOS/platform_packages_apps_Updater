@@ -69,7 +69,7 @@ public class NotificationHandler {
                 .setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setSmallIcon(R.drawable.ic_system_update_white_24dp);
+                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48);
         if (max <= 0) builder.setProgress(0, 0, true);
         else builder.setProgress(max, progress, false);
         return builder.build();
@@ -84,7 +84,7 @@ public class NotificationHandler {
                 .setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_DEFERRED)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setSmallIcon(R.drawable.ic_system_update_white_24dp).build());
+                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48).build());
     }
 
     void showUpdatedNotification(final String channel) {
@@ -104,7 +104,7 @@ public class NotificationHandler {
                 .setContentTitle(service.getString(R.string.notification_updated_title))
                 .setContentText(service.getString(R.string.notification_updated_text, channelText))
                 .setShowWhen(true)
-                .setSmallIcon(R.drawable.ic_system_update_white_24dp)
+                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48)
                 .build());
     }
 
@@ -145,7 +145,7 @@ public class NotificationHandler {
                         new Intent(service, RebootReceiver.class), PendingIntent.FLAG_IMMUTABLE);
 
         Notification.Action rebootAction = new Notification.Action.Builder(
-                Icon.createWithResource(service.getApplication(), R.drawable.ic_restart),
+                Icon.createWithResource(service.getApplication(), R.drawable.restart_alt_fill0_wght400_grad0_opsz48),
                 service.getString(R.string.notification_reboot_action),
                 reboot).build();
 
@@ -156,7 +156,7 @@ public class NotificationHandler {
                 .setContentText(service.getString(R.string.notification_reboot_text))
                 .setOngoing(true)
                 .setShowWhen(true)
-                .setSmallIcon(R.drawable.ic_system_update_white_24dp)
+                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48)
                 .build());
     }
 
@@ -195,7 +195,7 @@ public class NotificationHandler {
                 .setStyle(new Notification.BigTextStyle()
                     .bigText(styledText))
                 .setShowWhen(true)
-                .setSmallIcon(R.drawable.ic_system_update_white_24dp)
+                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48)
                 .build());
     }
 
