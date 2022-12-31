@@ -195,7 +195,7 @@ public class NotificationHandler {
                 .setStyle(new Notification.BigTextStyle()
                     .bigText(styledText))
                 .setShowWhen(true)
-                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48)
+                .setSmallIcon(R.drawable.security_update_warning_fill0_wght400_grad0_opsz48)
                 .build());
     }
 
