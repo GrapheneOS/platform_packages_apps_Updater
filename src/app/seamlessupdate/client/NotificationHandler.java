@@ -104,7 +104,7 @@ public class NotificationHandler {
                 .setContentTitle(service.getString(R.string.notification_updated_title))
                 .setContentText(service.getString(R.string.notification_updated_text, channelText))
                 .setShowWhen(true)
-                .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48)
+                .setSmallIcon(R.drawable.security_update_good_fill0_wght400_grad0_opsz48)
                 .build());
     }
 
