@@ -29,23 +29,23 @@ public class Settings extends CollapsingToolbarBaseActivity {
     }
 
     static String getChannel(final Context context) {
-        String def = context.getString(R.string.channel_default);
-        return getPreferences(context).getString(KEY_CHANNEL, def);
+        return getPreferences(context).getString(KEY_CHANNEL,
+                context.getString(R.string.channel_default));
     }
 
     static int getNetworkType(final Context context) {
-        int def = Integer.valueOf(context.getString(R.string.network_type_default));
-        return getPreferences(context).getInt(KEY_NETWORK_TYPE, def);
+        return getPreferences(context).getInt(KEY_NETWORK_TYPE,
+                Integer.valueOf(context.getString(R.string.network_type_default)));
     }
 
     static boolean getBatteryNotLow(final Context context) {
-        boolean def = Boolean.valueOf(context.getString(R.string.battery_not_low_default));
-        return getPreferences(context).getBoolean(KEY_BATTERY_NOT_LOW, def);
+        return getPreferences(context).getBoolean(KEY_BATTERY_NOT_LOW,
+                Boolean.valueOf(context.getString(R.string.battery_not_low_default)));
     }
 
     static boolean getIdleReboot(final Context context) {
-        boolean def = Boolean.valueOf(context.getString(R.string.idle_reboot_default));
-        return getPreferences(context).getBoolean(KEY_IDLE_REBOOT, def);
+        return getPreferences(context).getBoolean(KEY_IDLE_REBOOT,
+                Boolean.valueOf(context.getString(R.string.idle_reboot_default)));
     }
 
     @Override

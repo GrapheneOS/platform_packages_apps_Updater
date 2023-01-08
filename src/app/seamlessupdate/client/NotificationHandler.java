@@ -201,6 +201,6 @@ public class NotificationHandler {
 
     private PendingIntent getPendingSettingsIntent() {
         return PendingIntent.getActivity(service, PENDING_SETTINGS_ID, new Intent(service,
-                                Settings.class), PendingIntent.FLAG_IMMUTABLE);
+                Settings.class), PendingIntent.FLAG_IMMUTABLE);
     }
 }
