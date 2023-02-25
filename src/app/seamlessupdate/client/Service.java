@@ -322,12 +322,12 @@ public class Service extends IntentService {
             mUpdating = false;
             PeriodicJob.scheduleRetry(this);
         } finally {
-            Log.d(TAG, "release wake locks");
-            wakeLock.release();
             if (connection != null) {
                 connection.disconnect();
             }
             notificationHandler.cancelProgressNotification();
+            Log.d(TAG, "release wake lock");
+            wakeLock.release();
         }
     }
 }
