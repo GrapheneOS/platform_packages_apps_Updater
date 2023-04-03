@@ -18,7 +18,7 @@ android_app {
 prebuilt_etc {
     name: "permissions_app.seamlessupdate.client.xml",
     sub_dir: "permissions",
-    src: "permissions_app.seamlessupdate.client.xml",
+    src: "permissions/app.seamlessupdate.client.xml",
     filename_from_src: true,
 }
 
