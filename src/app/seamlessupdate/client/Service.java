@@ -216,7 +216,7 @@ public class Service extends IntentService {
         final Network network = intent.getParcelableExtra(INTENT_EXTRA_NETWORK, Network.class);
 
         final PowerManager pm = getSystemService(PowerManager.class);
-        final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Updater:" + TAG);
         HttpURLConnection connection = null;
         try {
             wakeLock.acquire();
