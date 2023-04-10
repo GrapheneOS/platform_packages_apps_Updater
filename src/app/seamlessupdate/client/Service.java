@@ -263,7 +263,7 @@ public class Service extends IntentService {
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
             long downloaded;
-            int contentLength;
+            long contentLength;
 
             final boolean streaming = SystemProperties.getBoolean("sys.update.streaming_test", false);
 
@@ -281,27 +281,27 @@ public class Service extends IntentService {
                     onDownloadFinished(streaming, targetBuildDate, channel);
                     return;
                 }
-                contentLength = connection.getContentLength() + (int) downloaded;
+                contentLength = connection.getContentLengthLong() + downloaded;
                 input = connection.getInputStream();
             } else {
                 try {
                     Log.d(TAG, "fetch incremental " + incrementalUpdate);
                     downloadFile = incrementalUpdate;
                     connection = fetchData(network, downloadFile);
-                    contentLength = connection.getContentLength();
+                    contentLength = connection.getContentLengthLong();
                     input = connection.getInputStream();
                 } catch (final IOException e) {
                     Log.d(TAG, "incremental not found, fetch full update " + fullUpdate);
                     downloadFile = fullUpdate;
                     connection = fetchData(network, downloadFile);
-                    contentLength = connection.getContentLength();
+                    contentLength = connection.getContentLengthLong();
                     input = connection.getInputStream();
                 }
                 downloaded = 0;
                 Files.deleteIfExists(UPDATE_PATH.toPath());
             }
 
-            notificationHandler.showDownloadNotification((int) downloaded, contentLength);
+            notificationHandler.showDownloadNotification(downloaded, contentLength);
 
             try (final OutputStream output = new FileOutputStream(UPDATE_PATH, downloaded != 0)) {
                 preferences.edit().putString(PREFERENCE_DOWNLOAD_FILE, downloadFile).commit();
@@ -315,7 +315,7 @@ public class Service extends IntentService {
                     final long now = System.nanoTime();
                     if (now - last > 1000 * 1000 * 1000) {
                         Log.d(TAG, "downloaded " + downloaded + " from " + contentLength + " bytes");
-                        notificationHandler.showDownloadNotification((int) downloaded, contentLength);
+                        notificationHandler.showDownloadNotification(downloaded, contentLength);
                         last = now;
                     }
                 }
