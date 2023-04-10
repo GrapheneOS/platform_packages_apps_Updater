@@ -36,7 +36,7 @@ public class NotificationHandler {
     private final Service service;
     private final NotificationManager notificationManager;
 
-    private static Phase phase;
+    private Phase phase;
 
     NotificationHandler(Service service) {
         this.service = service;
