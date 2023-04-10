@@ -218,6 +218,7 @@ public class Service extends IntentService {
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Updater:" + TAG);
         HttpURLConnection connection = null;
+        InputStream input = null;
         try {
             wakeLock.acquire();
 
@@ -237,10 +238,10 @@ public class Service extends IntentService {
 
             Log.d(TAG, "fetching metadata for " + DEVICE + "-" + channel);
             connection = fetchData(network, DEVICE + "-" + channel);
-            InputStream input = connection.getInputStream();
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            final String[] metadata = reader.readLine().split(" ");
-            reader.close();
+            final String[] metadata;
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                metadata = reader.readLine().split(" ");
+            }
 
             final String targetIncremental = metadata[0];
             final long targetBuildDate = Long.parseLong(metadata[1]);
