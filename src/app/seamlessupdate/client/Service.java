@@ -259,7 +259,7 @@ public class Service extends IntentService {
             notificationHandler.showDownloadNotification(0, 100);
 
             String downloadFile = preferences.getString(PREFERENCE_DOWNLOAD_FILE, null);
-            long downloaded = UPDATE_PATH.length();
+            long downloaded;
             int contentLength;
 
             final boolean streaming = SystemProperties.getBoolean("sys.update.streaming_test", false);
@@ -269,6 +269,7 @@ public class Service extends IntentService {
             final String fullUpdate = DEVICE + streamingPrefix + "-ota_update-" + targetIncremental + ".zip";
 
             if (incrementalUpdate.equals(downloadFile) || fullUpdate.equals(downloadFile)) {
+                downloaded = UPDATE_PATH.length();
                 Log.d(TAG, "resume fetch of " + downloadFile + " from " + downloaded + " bytes");
                 connection = fetchData(network, downloadFile);
                 connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
