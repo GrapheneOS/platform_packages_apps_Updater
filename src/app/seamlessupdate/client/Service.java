@@ -34,6 +34,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import libcore.io.IoUtils;
+
 public class Service extends IntentService {
     private static final String TAG = "Service";
     static final String INTENT_EXTRA_NETWORK = "network";
@@ -327,6 +329,8 @@ public class Service extends IntentService {
             mUpdating = false;
             PeriodicJob.scheduleRetry(this);
         } finally {
+            IoUtils.closeQuietly(input);
+
             if (connection != null) {
                 connection.disconnect();
             }
