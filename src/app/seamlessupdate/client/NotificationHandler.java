@@ -62,7 +62,7 @@ public class NotificationHandler {
         notificationManager.createNotificationChannels(channels);
     }
 
-    private Notification buildProgressNotification(int resId, int progress, int max) {
+    private Notification buildProgressNotification(int resId, long progress, long max) {
         Notification.Builder builder = new Notification.Builder(service, NOTIFICATION_CHANNEL_ID_PROGRESS)
                 .setContentIntent(getPendingSettingsIntent())
                 .setContentTitle(service.getString(resId))
@@ -70,8 +70,14 @@ public class NotificationHandler {
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setSmallIcon(R.drawable.system_update_fill0_wght400_grad0_opsz48);
-        if (max <= 0) builder.setProgress(0, 0, true);
-        else builder.setProgress(max, progress, false);
+        if (max <= 0) {
+            builder.setProgress(0, 0, true);
+        } else {
+            double fraction = (double) progress / (double) max;
+            int maxScaled = 100;
+            int progressScaled = (int) (fraction * (double) maxScaled);
+            builder.setProgress(maxScaled, progressScaled, false);
+        }
         return builder.build();
     }
 
@@ -108,7 +114,7 @@ public class NotificationHandler {
                 .build());
     }
 
-    void showDownloadNotification(int progress, int max) {
+    void showDownloadNotification(long progress, long max) {
         phase = Phase.DOWNLOAD;
         notificationManager.notify(NOTIFICATION_ID_PROGRESS,
                 buildProgressNotification(R.string.notification_download_title, progress, max));
