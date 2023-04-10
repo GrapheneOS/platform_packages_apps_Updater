@@ -2,6 +2,7 @@
 <permissions>
     <privapp-permissions package="app.seamlessupdate.client">
         <permission name="android.permission.ACCESS_CACHE_FILESYSTEM"/>
+        <permission name="android.permission.ALLOCATE_AGGRESSIVE"/>
         <permission name="android.permission.REBOOT"/>
     </privapp-permissions>
 </permissions>

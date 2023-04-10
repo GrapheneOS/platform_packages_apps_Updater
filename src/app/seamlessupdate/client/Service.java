@@ -17,6 +17,7 @@ import android.os.UpdateEngine;
 import android.os.UpdateEngine.ErrorCodeConstants;
 import android.os.UpdateEngine.UpdateStatusConstants;
 import android.os.UpdateEngineCallback;
+import android.os.storage.StorageManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -302,6 +303,17 @@ public class Service extends IntentService {
             }
 
             notificationHandler.showDownloadNotification(downloaded, contentLength);
+
+            final long requiredBytes = contentLength - downloaded;
+            try {
+                StorageManager sm = getSystemService(StorageManager.class);
+                // TODO: allocating bytes for file descriptor is more reliable, but it breaks the current
+                //  download resume code
+                sm.allocateBytes(sm.getUuidForPath(UPDATE_PATH), requiredBytes, StorageManager.FLAG_ALLOCATE_AGGRESSIVE);
+            } catch (IOException e) {
+                // storage space is likely to become available later
+                Log.d(TAG, "unable to allocate " + requiredBytes + " bytes, proceeding anyway", e);
+            }
 
             try (final OutputStream output = new FileOutputStream(UPDATE_PATH, downloaded != 0)) {
                 preferences.edit().putString(PREFERENCE_DOWNLOAD_FILE, downloadFile).commit();
