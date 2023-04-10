@@ -7,6 +7,7 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Network;
 import android.os.PersistableBundle;
 import android.os.SystemProperties;
 import android.util.Log;
@@ -77,7 +78,14 @@ public class PeriodicJob extends JobService {
     @Override
     public boolean onStartJob(final JobParameters params) {
         Log.d(TAG, "onStartJob id: " + params.getJobId());
-        startForegroundService(new Intent(this, Service.class));
+        final Network network = params.getNetwork();
+        if (network == null) {
+            Log.e(TAG, "JobParameters have a null Network");
+            return false;
+        }
+        final Intent intent = new Intent(this, Service.class);
+        intent.putExtra(Service.INTENT_EXTRA_NETWORK, network);
+        startForegroundService(intent);
         return false;
     }
 
