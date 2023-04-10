@@ -7,7 +7,7 @@ import static android.os.Build.VERSION.INCREMENTAL;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.net.Network;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RecoverySystem;
@@ -36,6 +36,7 @@ import java.util.zip.ZipFile;
 
 public class Service extends IntentService {
     private static final String TAG = "Service";
+    static final String INTENT_EXTRA_NETWORK = "network";
     private static final int CONNECT_TIMEOUT = 30000;
     private static final int READ_TIMEOUT = 30000;
     private static final File CARE_MAP_PATH = new File("/data/ota_package/care_map.pb");
@@ -56,9 +57,9 @@ public class Service extends IntentService {
         notificationHandler = new NotificationHandler(this);
     }
 
-    private HttpURLConnection fetchData(final String path) throws IOException {
+    private HttpURLConnection fetchData(final Network network, final String path) throws IOException {
         final URL url = new URL(getString(R.string.url) + path);
-        final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        final HttpURLConnection urlConnection = (HttpURLConnection) network.openConnection(url);
         urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
         urlConnection.setReadTimeout(READ_TIMEOUT);
         return urlConnection;
@@ -212,6 +213,8 @@ public class Service extends IntentService {
     protected void onHandleIntent(final Intent intent) {
         Log.d(TAG, "onHandleIntent");
 
+        final Network network = intent.getParcelableExtra(INTENT_EXTRA_NETWORK, Network.class);
+
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         HttpURLConnection connection = null;
@@ -233,7 +236,7 @@ public class Service extends IntentService {
             final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(this));
 
             Log.d(TAG, "fetching metadata for " + DEVICE + "-" + channel);
-            connection = fetchData(DEVICE + "-" + channel);
+            connection = fetchData(network, DEVICE + "-" + channel);
             InputStream input = connection.getInputStream();
             final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             final String[] metadata = reader.readLine().split(" ");
@@ -267,7 +270,7 @@ public class Service extends IntentService {
 
             if (incrementalUpdate.equals(downloadFile) || fullUpdate.equals(downloadFile)) {
                 Log.d(TAG, "resume fetch of " + downloadFile + " from " + downloaded + " bytes");
-                connection = fetchData(downloadFile);
+                connection = fetchData(network, downloadFile);
                 connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
                 if (connection.getResponseCode() == HTTP_RANGE_NOT_SATISFIABLE) {
                     Log.d(TAG, "download completed previously");
@@ -280,13 +283,13 @@ public class Service extends IntentService {
                 try {
                     Log.d(TAG, "fetch incremental " + incrementalUpdate);
                     downloadFile = incrementalUpdate;
-                    connection = fetchData(downloadFile);
+                    connection = fetchData(network, downloadFile);
                     contentLength = connection.getContentLength();
                     input = connection.getInputStream();
                 } catch (final IOException e) {
                     Log.d(TAG, "incremental not found, fetch full update " + fullUpdate);
                     downloadFile = fullUpdate;
-                    connection = fetchData(downloadFile);
+                    connection = fetchData(network, downloadFile);
                     contentLength = connection.getContentLength();
                     input = connection.getInputStream();
                 }
