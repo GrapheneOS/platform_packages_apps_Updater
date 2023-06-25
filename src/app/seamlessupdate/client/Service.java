@@ -255,6 +255,10 @@ public class Service extends IntentService {
                 mUpdating = false;
                 return;
             }
+            final String targetDevice = metadata[2];
+            if (!targetDevice.equals(DEVICE)) {
+                throw new GeneralSecurityException("targetDevice: " + targetDevice + " does not match device: " + DEVICE);
+            }
             final String targetChannel = metadata[3];
             if (!targetChannel.equals(channel)) {
                 throw new GeneralSecurityException("targetChannel: " + targetChannel + " does not match channel: " + channel);
