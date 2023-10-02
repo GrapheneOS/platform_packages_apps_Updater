@@ -5,4 +5,5 @@
     <string name="network_type_default" translatable="false">1</string>
     <string name="battery_not_low_default" translatable="false">false</string>
     <string name="idle_reboot_default" translatable="false">false</string>
+    <string name="disable_updates_default" translatable="false">false</string>
 </resources>

@@ -23,6 +23,11 @@ public class PeriodicJob extends JobService {
     private static final String EXTRA_JOB_CHANNEL = "extra_job_channel";
 
     static void schedule(final Context context, final boolean force) {
+        final boolean disableUpdates = Settings.getDisableUpdates(context);
+        if (!disableUpdates) {
+            Log.d(TAG, "Can't schedule. Updates are disabled");
+            return;
+        }
         final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(context));
         final int networkType = Settings.getNetworkType(context);
         final boolean batteryNotLow = Settings.getBatteryNotLow(context);

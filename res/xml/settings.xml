@@ -41,6 +41,13 @@
                 app:summaryOff="@string/idle_reboot_summary_off"
                 app:defaultValue="@string/idle_reboot_default" />
 
+        <SwitchPreference app:key="disable_updates"
+                app:title="@string/disable_updates_title"
+                app:iconSpaceReserved="false"
+                app:summaryOn="@string/disable_updates_summary_on"
+                app:summaryOff="@string/disable_updates_summary_off"
+                app:defaultValue="@string/disable_updates_default" />
+
         <Preference app:key="notification_settings"
                 app:title="@string/notification_settings_title"
                 app:iconSpaceReserved="false"

@@ -21,6 +21,7 @@ public class Settings extends CollapsingToolbarBaseActivity {
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
     private static final String KEY_CHECK_FOR_UPDATES = "check_for_updates";
+    private static final String KEY_DISABLE_UPDATES = "disable_updates";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
 
     static SharedPreferences getPreferences(final Context context) {
@@ -46,6 +47,11 @@ public class Settings extends CollapsingToolbarBaseActivity {
     static boolean getIdleReboot(final Context context) {
         return getPreferences(context).getBoolean(KEY_IDLE_REBOOT,
                 Boolean.valueOf(context.getString(R.string.idle_reboot_default)));
+    }
+
+    static boolean getDisableUpdates(final Context context) {
+        return getPreferences(context).getBoolean(KEY_DISABLE_UPDATES,
+                Boolean.valueOf(context.getString(R.string.disable_updates_default)));
     }
 
     @Override
