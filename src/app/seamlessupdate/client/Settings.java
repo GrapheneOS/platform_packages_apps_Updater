@@ -19,6 +19,7 @@ public class Settings extends CollapsingToolbarBaseActivity {
     private static final String KEY_CHANNEL = "channel";
     private static final String KEY_NETWORK_TYPE = "network_type";
     private static final String KEY_BATTERY_NOT_LOW = "battery_not_low";
+    private static final String KEY_REQUIRES_CHARGING = "requires_charging";
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
     private static final String KEY_CHECK_FOR_UPDATES = "check_for_updates";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
@@ -41,6 +42,11 @@ public class Settings extends CollapsingToolbarBaseActivity {
     static boolean getBatteryNotLow(final Context context) {
         return getPreferences(context).getBoolean(KEY_BATTERY_NOT_LOW,
                 Boolean.valueOf(context.getString(R.string.battery_not_low_default)));
+    }
+
+    static boolean getRequiresCharging(final Context context) {
+        return getPreferences(context).getBoolean(KEY_REQUIRES_CHARGING,
+                Boolean.valueOf(context.getString(R.string.requires_charging_default)));
     }
 
     static boolean getIdleReboot(final Context context) {
@@ -111,6 +117,7 @@ public class Settings extends CollapsingToolbarBaseActivity {
             switch (key) {
                 case KEY_CHANNEL:
                 case KEY_BATTERY_NOT_LOW:
+                case KEY_REQUIRES_CHARGING:
                     if (!getPreferences(requireContext()).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
                         PeriodicJob.schedule(requireContext());
                     }

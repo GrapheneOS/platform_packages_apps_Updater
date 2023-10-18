@@ -37,6 +37,9 @@
     <string name="battery_not_low_title">Require battery above warning level</string>
     <string name="battery_not_low_summary_on">Only download / install updates when the battery is above the warning level</string>
     <string name="battery_not_low_summary_off">Download / install updates even when the battery is below the warning level</string>
+    <string name="requires_charging_title">Require device to be charging</string>
+    <string name="requires_charging_summary_on">Only download / install updates when the device is charging</string>
+    <string name="requires_charging_summary_off">Download / install updates regardless of charging status</string>
     <string name="idle_reboot_title">Automatic reboot</string>
     <string name="idle_reboot_summary_on">Automatically reboot once the device is idle after successfully installing an update</string>
     <string name="idle_reboot_summary_off">Don\'t automatically reboot once the device is idle after successfully installing an update</string>

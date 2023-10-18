@@ -34,6 +34,13 @@
                 app:summaryOff="@string/battery_not_low_summary_off"
                 app:defaultValue="@string/battery_not_low_default" />
 
+        <SwitchPreference app:key="requires_charging"
+                app:title="@string/requires_charging_title"
+                app:iconSpaceReserved="false"
+                app:summaryOn="@string/requires_charging_summary_on"
+                app:summaryOff="@string/requires_charging_summary_off"
+                app:defaultValue="@string/requires_charging_default" />
+
         <SwitchPreference app:key="idle_reboot"
                 app:title="@string/idle_reboot_title"
                 app:iconSpaceReserved="false"

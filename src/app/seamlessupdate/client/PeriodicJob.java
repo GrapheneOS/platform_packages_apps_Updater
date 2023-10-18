@@ -26,11 +26,13 @@ public class PeriodicJob extends JobService {
         final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(context));
         final int networkType = Settings.getNetworkType(context);
         final boolean batteryNotLow = Settings.getBatteryNotLow(context);
+        final boolean requiresCharging = Settings.getRequiresCharging(context);
         final JobScheduler scheduler = context.getSystemService(JobScheduler.class);
         final JobInfo jobInfo = scheduler.getPendingJob(JOB_ID_PERIODIC);
         if (!force && jobInfo != null &&
                 jobInfo.getNetworkType() == networkType &&
                 jobInfo.isRequireBatteryNotLow() == batteryNotLow &&
+                jobInfo.isRequireCharging() == requiresCharging &&
                 jobInfo.isPersisted() &&
                 jobInfo.getIntervalMillis() == INTERVAL_MILLIS &&
                 Objects.equals(jobInfo.getExtras().getString(EXTRA_JOB_CHANNEL), channel)) {
@@ -43,6 +45,7 @@ public class PeriodicJob extends JobService {
         final int result = scheduler.schedule(new JobInfo.Builder(JOB_ID_PERIODIC, serviceName)
             .setRequiredNetworkType(networkType)
             .setRequiresBatteryNotLow(batteryNotLow)
+            .setRequiresCharging(requiresCharging)
             .setPersisted(true)
             .setPeriodic(INTERVAL_MILLIS)
             .setExtras(extras)
@@ -62,6 +65,7 @@ public class PeriodicJob extends JobService {
         final int result = scheduler.schedule(new JobInfo.Builder(JOB_ID_RETRY, serviceName)
             .setRequiredNetworkType(Settings.getNetworkType(context))
             .setRequiresBatteryNotLow(Settings.getBatteryNotLow(context))
+            .setRequiresCharging(Settings.getRequiresCharging(context))
             .setMinimumLatency(MIN_LATENCY_MILLIS)
             .build());
         if (result == JobScheduler.RESULT_FAILURE) {
