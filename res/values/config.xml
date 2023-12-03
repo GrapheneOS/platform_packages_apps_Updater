@@ -3,7 +3,7 @@
     <string name="url" translatable="false">https://releases.grapheneos.org/</string>
     <string name="channel_default" translatable="false">stable</string>
     <string name="network_type_default" translatable="false">1</string>
-    <string name="battery_not_low_default" translatable="false">false</string>
+    <string name="battery_not_low_default" translatable="false">true</string>
     <string name="requires_charging_default" translatable="false">false</string>
     <string name="idle_reboot_default" translatable="false">false</string>
 </resources>
