@@ -4,7 +4,7 @@
     <domain-config>
         <domain includeSubdomains="true">releases.grapheneos.org</domain>
         <!-- expiration is updated monthly to be approximately 2 months ahead -->
-        <pin-set expiration="2024-02-05">
+        <pin-set expiration="2024-03-05">
             <!-- ISRG Root X1 -->
             <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
 
