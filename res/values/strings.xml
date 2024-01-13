@@ -4,7 +4,7 @@
     <string name="notification_channel_progress">Update progress</string>
     <string name="notification_channel_reboot">Reboot prompt</string>
     <string name="notification_channel_failure">Error reporting</string>
-    <string name="notification_channel_updated">Already updated</string>
+    <string name="notification_channel_updated">Already up to date</string>
     <string name="notification_check_title">Checking for system update</string>
     <string name="notification_download_title">Downloading system update</string>
     <string name="notification_verify_title">Verifying system update</string>
