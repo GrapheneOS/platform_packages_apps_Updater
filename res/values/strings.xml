@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">System Updater</string>
-    <string name="notification_channel_progress">Update Progress</string>
-    <string name="notification_channel_reboot">Reboot Prompt</string>
-    <string name="notification_channel_failure">Error Reporting</string>
-    <string name="notification_channel_updated">Already Updated</string>
+    <string name="notification_channel_progress">Update progress</string>
+    <string name="notification_channel_reboot">Reboot prompt</string>
+    <string name="notification_channel_failure">Error reporting</string>
+    <string name="notification_channel_updated">Already updated</string>
     <string name="notification_check_title">Checking for system update</string>
     <string name="notification_download_title">Downloading system update</string>
     <string name="notification_verify_title">Verifying system update</string>
