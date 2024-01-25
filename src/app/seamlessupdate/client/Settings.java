@@ -36,22 +36,22 @@ public class Settings extends CollapsingToolbarBaseActivity {
 
     static int getNetworkType(final Context context) {
         return getPreferences(context).getInt(KEY_NETWORK_TYPE,
-                Integer.valueOf(context.getString(R.string.network_type_default)));
+                Integer.parseInt(context.getString(R.string.network_type_default)));
     }
 
     static boolean getBatteryNotLow(final Context context) {
         return getPreferences(context).getBoolean(KEY_BATTERY_NOT_LOW,
-                Boolean.valueOf(context.getString(R.string.battery_not_low_default)));
+                Boolean.parseBoolean(context.getString(R.string.battery_not_low_default)));
     }
 
     static boolean getRequiresCharging(final Context context) {
         return getPreferences(context).getBoolean(KEY_REQUIRES_CHARGING,
-                Boolean.valueOf(context.getString(R.string.requires_charging_default)));
+                Boolean.parseBoolean(context.getString(R.string.requires_charging_default)));
     }
 
     static boolean getIdleReboot(final Context context) {
         return getPreferences(context).getBoolean(KEY_IDLE_REBOOT,
-                Boolean.valueOf(context.getString(R.string.idle_reboot_default)));
+                Boolean.parseBoolean(context.getString(R.string.idle_reboot_default)));
     }
 
     @Override
