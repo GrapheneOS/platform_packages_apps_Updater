@@ -1,9 +1,13 @@
 package app.seamlessupdate.client;
 
+import android.net.Network;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.UserManager;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -82,14 +86,25 @@ public class Settings extends CollapsingToolbarBaseActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat
             implements SharedPreferences.OnSharedPreferenceChangeListener {
+        private static String TAG = "SettingsFragment";
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             getPreferenceManager().setStorageDeviceProtected();
             setPreferencesFromResource(R.xml.settings, rootKey);
 
             Preference.OnPreferenceClickListener clickListener = preference -> {
-                if (!getPreferences(requireContext()).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
-                    PeriodicJob.schedule(requireContext(), true);
+                final Context context = requireContext();
+                if (!getPreferences(context).getBoolean(KEY_WAITING_FOR_REBOOT, false)) {
+                    final ConnectivityManager connectivityManager = context.getSystemService(ConnectivityManager.class);
+                    final Network network = connectivityManager.getActiveNetwork();
+                    if (network == null) {
+                        Log.w(TAG, "checkForUpdates.onClickListener – network will be unavailable");
+                    }
+                    final var intent = new Intent(context, Service.class);
+                    intent.putExtra(Service.INTENT_EXTRA_IS_USER_INITIATED, true);
+                    intent.putExtra(Service.INTENT_EXTRA_NETWORK, network);
+                    context.startForegroundService(intent);
                 }
                 return true;
             };
