@@ -40,6 +40,7 @@ import libcore.io.IoUtils;
 public class Service extends IntentService {
     private static final String TAG = "Service";
     static final String INTENT_EXTRA_NETWORK = "network";
+    static final String INTENT_EXTRA_IS_USER_INITIATED = "is_user_initiated";
     private static final int CONNECT_TIMEOUT = 30000;
     private static final int READ_TIMEOUT = 30000;
     private static final File CARE_MAP_PATH = new File("/data/ota_package/care_map.pb");
@@ -217,6 +218,8 @@ public class Service extends IntentService {
         Log.d(TAG, "onHandleIntent");
 
         final Network network = intent.getParcelableExtra(INTENT_EXTRA_NETWORK, Network.class);
+        final var serviceIsUserInitiated = intent.getBooleanExtra(INTENT_EXTRA_IS_USER_INITIATED, false);
+        if (serviceIsUserInitiated) Log.d(TAG, "onHandeIntent() – service is user-initiated");
 
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Updater:" + TAG);
@@ -236,6 +239,10 @@ public class Service extends IntentService {
             }
             mUpdating = true;
             notificationHandler.start();
+
+            if (network == null) {
+                throw new IOException("Network is unavailable");
+            }
 
             final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(this));
 
@@ -343,7 +350,14 @@ public class Service extends IntentService {
             Log.e(TAG, "failed to download and install update", e);
             notificationHandler.showFailureNotification(e.getMessage());
             mUpdating = false;
-            PeriodicJob.scheduleRetry(this);
+            if (serviceIsUserInitiated) {
+                // Either the user will try again immediately or the already scheduled periodic
+                // job will pick it up under constraints (which will retry on failure)
+                Log.w(TAG, "onHandleIntent() – service failed but failure is ignored because it was user-initiated");
+            } else {
+                PeriodicJob.scheduleRetry(this);
+                Log.w(TAG, "onHandleIntent() – service failed but has been scheduled for retry");
+            }
         } finally {
             IoUtils.closeQuietly(input);
 

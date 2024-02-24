@@ -22,14 +22,14 @@ public class PeriodicJob extends JobService {
     private static final long MIN_LATENCY_MILLIS = 4 * 60 * 1000;
     private static final String EXTRA_JOB_CHANNEL = "extra_job_channel";
 
-    static void schedule(final Context context, final boolean force) {
+    static void schedule(final Context context) {
         final String channel = SystemProperties.get("sys.update.channel", Settings.getChannel(context));
         final int networkType = Settings.getNetworkType(context);
         final boolean batteryNotLow = Settings.getBatteryNotLow(context);
         final boolean requiresCharging = Settings.getRequiresCharging(context);
         final JobScheduler scheduler = context.getSystemService(JobScheduler.class);
         final JobInfo jobInfo = scheduler.getPendingJob(JOB_ID_PERIODIC);
-        if (!force && jobInfo != null &&
+        if (jobInfo != null &&
                 jobInfo.getNetworkType() == networkType &&
                 jobInfo.isRequireBatteryNotLow() == batteryNotLow &&
                 jobInfo.isRequireCharging() == requiresCharging &&
@@ -53,10 +53,6 @@ public class PeriodicJob extends JobService {
         if (result == JobScheduler.RESULT_FAILURE) {
             Log.d(TAG, "Periodic job schedule failed");
         }
-    }
-
-    static void schedule(final Context context) {
-        schedule(context, false);
     }
 
     static void scheduleRetry(final Context context) {
