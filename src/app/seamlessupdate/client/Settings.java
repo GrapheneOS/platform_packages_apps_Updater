@@ -17,6 +17,9 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.Preference;
 import androidx.preference.ListPreference;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface.OnClickListener;
+
 import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
 
 public class Settings extends CollapsingToolbarBaseActivity {
@@ -86,8 +89,6 @@ public class Settings extends CollapsingToolbarBaseActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat
             implements SharedPreferences.OnSharedPreferenceChangeListener {
-        private static String TAG = "SettingsFragment";
-
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             getPreferenceManager().setStorageDeviceProtected();
@@ -99,12 +100,17 @@ public class Settings extends CollapsingToolbarBaseActivity {
                     final ConnectivityManager connectivityManager = context.getSystemService(ConnectivityManager.class);
                     final Network network = connectivityManager.getActiveNetwork();
                     if (network == null) {
-                        Log.w(TAG, "checkForUpdates.onClickListener – network will be unavailable");
+                        new AlertDialog.Builder(context)
+                                .setTitle(R.string.check_for_updates_error_title)
+                                .setMessage(R.string.check_for_updates_error_no_internet_message)
+                                .setPositiveButton(R.string.okay, (dialog, which) -> dialog.dismiss())
+                                .show();
+                    } else {
+                        final var intent = new Intent(context, Service.class);
+                        intent.putExtra(Service.INTENT_EXTRA_IS_USER_INITIATED, true);
+                        intent.putExtra(Service.INTENT_EXTRA_NETWORK, network);
+                        context.startForegroundService(intent);
                     }
-                    final var intent = new Intent(context, Service.class);
-                    intent.putExtra(Service.INTENT_EXTRA_IS_USER_INITIATED, true);
-                    intent.putExtra(Service.INTENT_EXTRA_NETWORK, network);
-                    context.startForegroundService(intent);
                 }
                 return true;
             };
