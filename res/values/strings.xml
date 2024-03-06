@@ -17,7 +17,7 @@
     <string name="notification_updated_title">Device is up-to-date</string>
     <string name="notification_updated_text">Latest %s channel release is already installed.</string>
     <string name="notification_failed_check_title">Failed to check for updates</string>
-    <string name="notification_failed_check_text">An error occured checking for the latest update. The update system will try again soon.</string>
+    <string name="notification_failed_check_text">An error occurred checking for the latest update. The update system will try again soon.</string>
     <string name="notification_failed_download_title">Failed to download update</string>
     <string name="notification_failed_download_text">An error occurred downloading the latest update. The update system will try again soon. The download will be resumed if it\'s still the latest version.</string>
     <string name="notification_failed_verify_title">Failed to verify update</string>
