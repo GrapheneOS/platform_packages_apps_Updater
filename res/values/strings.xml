@@ -61,4 +61,6 @@ The only difference between regular releases and security preview releases are t
     <string name="security_preview_settings_error_saving">An error occurred trying to save security preview releases setting</string>
     <string name="next">Next</string>
     <string name="save">Save</string>
+    <string name="alert_metered_network">You\'re connected to a metered network. Continuing may use mobile data and result in extra charges. Proceed?</string>
+    <string name="alert_roaming_network">You\'re on a roaming network. Continuing may incur additional data charges. Proceed?</string>
 </resources>

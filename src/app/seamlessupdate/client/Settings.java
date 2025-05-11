@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.MenuItem;
+import android.app.job.JobInfo;
+import android.app.AlertDialog;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -104,6 +107,20 @@ public class Settings extends CollapsingToolbarBaseActivity {
             implements SharedPreferences.OnSharedPreferenceChangeListener {
         private static String TAG = "SettingsFragment";
 
+        private void showAlertDialogForMismatchedNetwork(final Context context, final Network network, final int messageId) {
+            new AlertDialog.Builder(context)
+                .setTitle(android.R.string.dialog_alert_title)
+                .setMessage(messageId)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    final var intent = new Intent(context, Service.class);
+                    intent.putExtra(Service.INTENT_EXTRA_IS_USER_INITIATED, true);
+                    intent.putExtra(Service.INTENT_EXTRA_NETWORK, network);
+                    context.startForegroundService(intent);
+                })
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> {})
+                .show();
+        }
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             getPreferenceManager().setStorageDeviceProtected();
@@ -116,6 +133,19 @@ public class Settings extends CollapsingToolbarBaseActivity {
                     final Network network = connectivityManager.getActiveNetwork();
                     if (network == null) {
                         Log.w(TAG, "checkForUpdates.onClickListener – network will be unavailable");
+                    } else {
+                        final int networkType = Settings.getNetworkType(context);
+                        final NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(network);
+                        if (networkCapabilities != null && networkType == JobInfo.NETWORK_TYPE_UNMETERED 
+                            && !networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED)) {
+                                showAlertDialogForMismatchedNetwork(context, network, R.string.alert_metered_network);
+                                return true;
+                        }
+                        if (networkCapabilities != null && networkType == JobInfo.NETWORK_TYPE_NOT_ROAMING 
+                            && !networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING)) {
+                                showAlertDialogForMismatchedNetwork(context, network, R.string.alert_roaming_network);
+                                return true;
+                        }
                     }
                     final var intent = new Intent(context, Service.class);
                     intent.putExtra(Service.INTENT_EXTRA_IS_USER_INITIATED, true);
