@@ -1,14 +1,18 @@
 package app.seamlessupdate.client;
 
+import android.app.Activity;
+import android.app.KeyguardManager;
 import android.net.Network;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.UserManager;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +35,11 @@ public class Settings extends CollapsingToolbarBaseActivity {
     private static final String KEY_IDLE_REBOOT = "idle_reboot";
     private static final String KEY_CHECK_FOR_UPDATES = "check_for_updates";
     static final String KEY_WAITING_FOR_REBOOT = "waiting_for_reboot";
+    static final String KEY_INSTALL_FROM_FILE = "install_from_file";
+
+    private static final int REQUEST_CONFIRM_CREDENTIAL = 1;
+    private static final int REQUEST_PICK_OTA = 2;
+    private static final String OTA_MIME_TYPE = "application/zip";
 
     static SharedPreferences getPreferences(final Context context) {
         final Context deviceContext = context.createDeviceProtectedStorageContext();
@@ -100,6 +109,49 @@ public class Settings extends CollapsingToolbarBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Manually install an OTA from a file chosen with the system file picker. This is gated behind
+    // a confirmation of the owner's device credential (PIN / password / pattern) so it cannot be
+    // triggered without the owner's authorization. The chosen package is still fully signature- and
+    // metadata-verified by the Service before installation.
+    void startInstallFromFile() {
+        // Returns null when no device credential is set, which is the only state we need to reject.
+        final Intent intent = getSystemService(KeyguardManager.class).createConfirmDeviceCredentialIntent(
+                getString(R.string.install_from_file_confirm_title),
+                getString(R.string.install_from_file_confirm_description));
+        if (intent == null) {
+            Toast.makeText(this, R.string.install_from_file_no_credential, Toast.LENGTH_LONG).show();
+            return;
+        }
+        startActivityForResult(intent, REQUEST_CONFIRM_CREDENTIAL);
+    }
+
+    private void pickOtaFile() {
+        final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(OTA_MIME_TYPE);
+        startActivityForResult(intent, REQUEST_PICK_OTA);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_CONFIRM_CREDENTIAL) {
+            pickOtaFile();
+        } else if (requestCode == REQUEST_PICK_OTA && data != null) {
+            final Uri uri = data.getData();
+            if (uri == null) {
+                return;
+            }
+            final Intent intent = new Intent(this, Service.class);
+            intent.putExtra(Service.INTENT_EXTRA_IS_USER_INITIATED, true);
+            intent.putExtra(Service.INTENT_EXTRA_LOCAL_URI, uri);
+            startForegroundService(intent);
+        }
+    }
+
     public static class SettingsFragment extends PreferenceFragment
             implements SharedPreferences.OnSharedPreferenceChangeListener {
         private static String TAG = "SettingsFragment";
@@ -122,6 +174,11 @@ public class Settings extends CollapsingToolbarBaseActivity {
                     intent.putExtra(Service.INTENT_EXTRA_NETWORK, network);
                     context.startForegroundService(intent);
                 }
+                return true;
+            });
+
+            requirePreference(KEY_INSTALL_FROM_FILE).setOnPreferenceClickListener(pref -> {
+                ((Settings) requireActivity()).startInstallFromFile();
                 return true;
             });
 

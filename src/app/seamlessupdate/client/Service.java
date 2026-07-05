@@ -8,6 +8,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Network;
+import android.net.Uri;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RecoverySystem;
@@ -46,6 +47,7 @@ public class Service extends IntentService {
     private static final String TAG = "Service";
     static final String INTENT_EXTRA_NETWORK = "network";
     static final String INTENT_EXTRA_IS_USER_INITIATED = "is_user_initiated";
+    static final String INTENT_EXTRA_LOCAL_URI = "local_uri";
     private static final int CONNECT_TIMEOUT = 30000;
     private static final int READ_TIMEOUT = 30000;
     private static final File CARE_MAP_PATH = new File("/data/ota_package/care_map.pb");
@@ -148,8 +150,9 @@ public class Service extends IntentService {
         return entry;
     }
 
-    private void onDownloadFinished(final boolean streaming, final long targetBuildDate,
-            final String targetIncremental) throws IOException, GeneralSecurityException {
+    private void onDownloadFinished(final boolean streaming, final boolean local,
+            final long targetBuildDate, final String targetIncremental)
+            throws IOException, GeneralSecurityException {
         try {
             notificationHandler.showVerifyNotification(0);
             RecoverySystem.verifyPackage(UPDATE_PATH, (int progress) -> {
@@ -193,10 +196,12 @@ public class Service extends IntentService {
                     }
                 }
             }
-            if (timestamp != targetBuildDate) {
+            // A locally provided OTA via file picker has no server metadata to cross-check
+            // against, so skip the timestamp and incremental comparisons for it.
+            if (!local && timestamp != targetBuildDate) {
                 throw new GeneralSecurityException("timestamp does not match server metadata");
             }
-            if (!targetIncremental.equals(incremental)) {
+            if (!local && !targetIncremental.equals(incremental)) {
                 throw new GeneralSecurityException("incremental does not match server metadata");
             }
             if (!DEVICE.equals(device)) {
@@ -258,6 +263,27 @@ public class Service extends IntentService {
         notificationHandler.showRebootNotification();
     }
 
+    // Copy a local OTA file given via the file picker into UPDATE_PATH and
+    // install it. The package goes through the same RecoverySystem signature verification and
+    // metadata checks (device, A/B type, source build) as a downloaded update in
+    // onDownloadFinished(); only the server timestamp and incremental cross-checks are skipped
+    // since there is no server metadata.
+    private void installLocalUpdate(final SharedPreferences preferences, final Uri localUri)
+            throws IOException, GeneralSecurityException {
+        notificationHandler.showDownloadNotification(0, 0);
+        Files.deleteIfExists(UPDATE_PATH.toPath());
+        // Clear stale download bookkeeping so a later network check doesn't try to resume the copy.
+        preferences.edit().remove(PREFERENCE_DOWNLOAD_FILE).commit();
+        try (final InputStream input = getContentResolver().openInputStream(localUri)) {
+            if (input == null) {
+                throw new IOException("unable to open " + localUri);
+            }
+            Files.copy(input, UPDATE_PATH.toPath());
+        }
+        Log.d(TAG, "local OTA copy completed");
+        onDownloadFinished(false, true, 0, null);
+    }
+
     @Override
     protected void onHandleIntent(final Intent intent) {
         Log.d(TAG, "onHandleIntent");
@@ -265,6 +291,8 @@ public class Service extends IntentService {
         final Network network = intent.getParcelableExtra(INTENT_EXTRA_NETWORK, Network.class);
         final var serviceIsUserInitiated = intent.getBooleanExtra(INTENT_EXTRA_IS_USER_INITIATED, false);
         if (serviceIsUserInitiated) Log.d(TAG, "onHandleIntent() – service is user-initiated");
+
+        final Uri localUri = intent.getParcelableExtra(INTENT_EXTRA_LOCAL_URI, Uri.class);
 
         final PowerManager pm = getSystemService(PowerManager.class);
         final WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Updater:" + TAG);
@@ -284,6 +312,11 @@ public class Service extends IntentService {
             }
             mUpdating = true;
             notificationHandler.start();
+
+            if (localUri != null) {
+                installLocalUpdate(preferences, localUri);
+                return;
+            }
 
             if (network == null) {
                 throw new IOException("Network is unavailable");
@@ -341,7 +374,7 @@ public class Service extends IntentService {
                 final int responseCode = connection.getResponseCode();
                 if (responseCode == HTTP_RANGE_NOT_SATISFIABLE) {
                     Log.d(TAG, "download completed previously");
-                    onDownloadFinished(streaming, targetBuildDate, targetIncremental);
+                    onDownloadFinished(streaming, false, targetBuildDate, targetIncremental);
                     return;
                 }
                 if (responseCode == HTTP_NOT_FOUND && incrementalUpdate.equals(downloadFile)) {
@@ -418,7 +451,7 @@ public class Service extends IntentService {
             }
 
             Log.d(TAG, "download completed");
-            onDownloadFinished(streaming, targetBuildDate, targetIncremental);
+            onDownloadFinished(streaming, false, targetBuildDate, targetIncremental);
         } catch (GeneralSecurityException | IOException | ServiceSpecificException e) {
             Log.e(TAG, "failed to download and install update", e);
             notificationHandler.showFailureNotification(e.getMessage());

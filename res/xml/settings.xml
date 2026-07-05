@@ -66,4 +66,9 @@
 
     </PreferenceCategory>
 
+    <Preference app:key="install_from_file"
+            app:title="@string/install_from_file_title"
+            app:summary="@string/install_from_file_summary"
+            app:iconSpaceReserved="false" />
+
 </PreferenceScreen>
