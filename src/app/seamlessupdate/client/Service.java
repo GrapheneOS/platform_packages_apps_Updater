@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.CountDownLatch;
@@ -54,6 +55,7 @@ public class Service extends IntentService {
     private static final String PREFERENCE_FAILED_INCREMENTAL = "failed_incremental";
     private static final int HTTP_RANGE_NOT_SATISFIABLE = 416;
     private static final int UPDATE_ENGINE_DOWNLOAD_STATE_INITIALIZATION_ERROR = 20;
+    private static final int MAX_METADATA_BYTES = 4096;
 
     private final ModernTLSSocketFactory tlsSocketFactory = new ModernTLSSocketFactory();
 
@@ -248,6 +250,29 @@ public class Service extends IntentService {
         }
     }
 
+    private static String[] readMetadata(final HttpsURLConnection connection) throws IOException {
+        final byte[] body;
+        try (final InputStream input = connection.getInputStream()) {
+            body = input.readNBytes(MAX_METADATA_BYTES + 1);
+        }
+        if (body.length > MAX_METADATA_BYTES) {
+            throw new IOException("update information exceeds " + MAX_METADATA_BYTES + " bytes");
+        }
+        final String line = new String(body, StandardCharsets.UTF_8).split("\n", 2)[0].trim();
+        final String[] metadata = line.split(" ");
+        if (metadata.length < 4 || metadata[0].isEmpty()
+                || metadata[2].isEmpty() || metadata[3].isEmpty()
+                || !metadata[1].matches("[0-9]+")) {
+            throw new IOException("malformed update information from the update server");
+        }
+        try {
+            Long.parseLong(metadata[1]);
+        } catch (final NumberFormatException e) {
+            throw new IOException("malformed build date in update information", e);
+        }
+        return metadata;
+    }
+
     private void annoyUser() {
         PeriodicJob.cancel(this);
         final SharedPreferences preferences = Settings.getPreferences(this);
@@ -293,10 +318,7 @@ public class Service extends IntentService {
 
             Log.d(TAG, "fetching metadata for " + DEVICE + "-" + channel);
             connection = fetchData(network, DEVICE + "-" + channel);
-            final String[] metadata;
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                metadata = reader.readLine().split(" ");
-            }
+            final String[] metadata = readMetadata(connection);
 
             final String targetIncremental = metadata[0];
             final long targetBuildDate = Long.parseLong(metadata[1]);
