@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mise à jour système</string>
+    <string name="notification_channel_progress">Progression de la mise à jour</string>
+    <string name="notification_channel_reboot">Invitation au redémarrage</string>
+    <string name="notification_channel_failure">Rapport d\'erreurs</string>
+    <string name="notification_channel_updated">Déjà à jour</string>
+    <string name="notification_channel_set_security_preview">Inscription aux versions préliminaires de sécurité</string>
+    <string name="notification_check_title">Recherche de mise à jour système</string>
+    <string name="notification_download_title">Téléchargement de la mise à jour système</string>
+    <string name="notification_verify_title">Vérification de la mise à jour système</string>
+    <string name="notification_install_title">Installation de la mise à jour système</string>
+    <string name="notification_validate_title">Validation de la mise à jour système</string>
+    <string name="notification_finalize_title">Finalisation de la mise à jour système</string>
+    <string name="notification_reboot_title">Mise à jour installée avec succès</string>
+    <string name="notification_reboot_text">Veuillez redémarrer l\'appareil pour utiliser la dernière version du système.</string>
+    <string name="notification_reboot_action">Redémarrer</string>
+    <string name="notification_updated_title">L\'appareil est à jour</string>
+    <string name="notification_updated_text">La dernière version du canal %s est déjà installée.</string>
+    <string name="notification_failed_check_title">Échec de la recherche de mises à jour</string>
+    <string name="notification_failed_check_text">Une erreur s\'est produite lors de la recherche de la dernière mise à jour. Le système de mise à jour réessaiera bientôt.</string>
+    <string name="notification_failed_download_title">Échec du téléchargement de la mise à jour</string>
+    <string name="notification_failed_download_text">Une erreur s\'est produite lors du téléchargement de la dernière mise à jour. Le système de mise à jour réessaiera bientôt. Le téléchargement sera repris s\'il s\'agit toujours de la version la plus récente.</string>
+    <string name="notification_failed_verify_title">Échec de la vérification de la mise à jour</string>
+    <string name="notification_failed_verify_text">La dernière mise à jour téléchargée depuis le serveur n\'a pas passé la vérification. Le système de mise à jour réessaiera bientôt. Le téléchargement sera effectué à nouveau.</string>
+    <string name="notification_failed_install_title">Échec de l\'installation de la mise à jour</string>
+    <string name="notification_failed_install_text">La dernière mise à jour a passé la vérification mais l\'installation a échoué. Le système de mise à jour réessaiera bientôt.</string>
+    <string name="notification_set_security_preview_title">Versions préliminaires de sécurité</string>
+    <string name="notification_set_security_preview_text">Appuyez pour choisir de vous inscrire aux versions préliminaires de sécurité</string>
+    <string name="settings_title">Mise à jour du système</string>
+    <string name="settings_header">Paramètres</string>
+    <string name="channel_title">Canal de publication</string>
+    <string name="channel_stable">Stable</string>
+    <string name="channel_beta">Bêta</string>
+    <string name="channel_alpha">Alpha</string>
+    <string name="network_type_title">Réseaux autorisés</string>
+    <string name="network_type_any">Tous</string>
+    <string name="network_type_not_roaming">Sans itinérance</string>
+    <string name="network_type_unmetered">Non limité</string>
+    <string name="battery_not_low_title">Exiger un niveau de batterie suffisant</string>
+    <string name="battery_not_low_summary_on">Télécharger / installer les mises à jour uniquement lorsque la batterie est au-dessus du niveau d\'avertissement</string>
+    <string name="battery_not_low_summary_off">Télécharger / installer les mises à jour même lorsque la batterie est en dessous du niveau d\'avertissement</string>
+    <string name="requires_charging_title">Exiger que l\'appareil soit en charge</string>
+    <string name="requires_charging_summary_on">Télécharger / installer les mises à jour uniquement lorsque l\'appareil est en charge</string>
+    <string name="requires_charging_summary_off">Télécharger / installer les mises à jour quel que soit l\'état de charge</string>
+    <string name="idle_reboot_title">Redémarrage automatique</string>
+    <string name="idle_reboot_summary_on">Redémarrer automatiquement lorsque l\'appareil est inactif après l\'installation réussie d\'une mise à jour</string>
+    <string name="idle_reboot_summary_off">Ne pas redémarrer automatiquement lorsque l\'appareil est inactif après l\'installation réussie d\'une mise à jour</string>
+    <string name="check_for_updates_title">Rechercher des mises à jour</string>
+    <string name="check_for_updates_summary">Appuyez pour rechercher des mises à jour</string>
+    <string name="notification_settings_title">Paramètres de notification</string>
+    <string name="notification_settings_summary">Modifier les paramètres des canaux de notification</string>
+    <string name="use_security_preview_channel_title">Recevoir les versions préliminaires de sécurité</string>
+    <string name="use_security_preview_channel_summary_on">Utiliser des canaux de publication alternatifs recevant des correctifs de sécurité encore sous embargo pour le code source et les détails</string>
+    <string name="use_security_preview_channel_summary_off">Ne pas utiliser de canaux de publication alternatifs recevant des correctifs de sécurité encore sous embargo pour le code source et les détails</string>
+    <string name="security_preview_settings_title">Versions préliminaires de sécurité</string>
+    <string name="security_preview_settings_description">
+Vous pouvez vous inscrire aux versions préliminaires de sécurité qui offrent un accès anticipé aux correctifs de sécurité Android avant la divulgation officielle. Il est recommandé d\'activer cette option.
+
+La seule différence entre les versions régulières et les versions préliminaires de sécurité réside dans les futurs correctifs de sécurité Android appliqués. L\'inconvénient des versions préliminaires de sécurité est que le code source des correctifs ne peut être fourni qu\'après la date de divulgation officielle.</string>
+    <string name="security_preview_settings_error_saving">Une erreur s\'est produite lors de l\'enregistrement du paramètre des versions préliminaires de sécurité</string>
+    <string name="next">Suivant</string>
+    <string name="save">Enregistrer</string>
+</resources>
